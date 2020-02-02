@@ -1,0 +1,11 @@
+$white: #F9FCFA;
+$black: #000411;
+$gray: #AEB7B3;
+$yellow: #F3D991;
+$purple: #40384F;
+
+.flex-container {
+    display: flex;                       
+    flex-wrap: wrap;                     
+    justify-content: space-around;
+}

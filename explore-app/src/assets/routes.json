@@ -1,0 +1,35 @@
+[
+	{
+		"id": "1", 
+		"title": "Усадьба Рейтанов в Грушевке", 
+		"duration": "13.5", 
+		"cost": "20",
+		"days": [6], 
+		"sights": ["Часовня-усыпальнца Рейтанов", "Усадьба Рейтанов", "Ляховичи", "Барановичи"],
+		"titleImage": "title.jpg",
+		"shortDescription": "Короткий пешетрип к красивущей и монументальной часовне-усыпальнце Рейтанов, а также к их бывшей усадьбе.",
+		"route": [
+			{"from": "Минск", "to": "Барановичи", "by": "train", "startTime": "06:58", "endTime": "9:00"},
+			{"to": "Ляховичи", "by": "bus", "startTime": "09:20", "endTime": "10:00"},
+			{"to": "Грушевка", "by": "feet", "distance": "5"},
+			{"to": "Русиновичи", "by": "feet", "distance": "6"},
+			{"to": "Барановичи", "by": "train", "startTime": "16:12", "endTime": "16:46"},
+			{"to": "Минск", "by": "train", "startTime": "17:52", "endTime": "20:37"}
+		],
+		"photos": [
+			"1.jpg",
+			"2.jpg",
+			"3.jpg",
+			"4.jpg",
+			"5.jpg",
+			"6.jpg",
+			"7.jpg"
+		],
+		"links": [
+			"https://34travel.me/gotobelarus/post/mesto-nedeli-usadba-rejjtanov-v-grushevke", 
+			"http://meridian28.com/report/grushevka.html",
+			"https://planetabelarus.by/sights/usadba-reytanov-v-grushevke",
+			"https://www.holiday.by/by/skarb/1214-usadba-roda-rejtanov",
+			"http://sportturizm.lyahovichi.brest.by/%D0%BA%D0%BE%D0%BC%D0%BF%D0%BB%D0%B5%D0%BA%D1%81-%D0%B1%D1%8B%D0%B2%D1%88%D0%B5%D0%B9-%D1%83%D1%81%D0%B0%D0%B4%D1%8C%D0%B1%D1%8B-%D1%80%D0%B5%D0%B9%D1%82%D0%B0%D0%BD%D0%BE%D0%B2-%D0%B2-%D0%B4-%D0%B3"]
+	}
+]
