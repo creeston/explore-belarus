@@ -1,13 +1,13 @@
-<div class="card">
-    <div class="card-header">
+<div class="place-card">
+    <div class="place-card-header">
         {{ title }}
     </div>
-    <div class="card-body">
-        <ngb-carousel *ngIf="photos" interval="null">
-            <ng-template ngbSlide *ngFor="let photo of photos">
+    <div class="place-card-body">
+        <ngb-carousel *ngIf="place.sights" interval="null">
+            <ng-template ngbSlide *ngFor="let image of photos">
                 <div class="image-container">
                     <div class="overlay"></div>
-                    <img [src]="photo" />
+                    <img [src]="image" />
                 </div>
             </ng-template>
         </ngb-carousel>
@@ -26,7 +26,7 @@
       </div>
     </div>
     -->
-    <div class="card-footer">
+    <div class="place-card-footer">
         <div class="icon-button" (click)="visited()">
             <i class="fas fa-check"></i>
         </div>

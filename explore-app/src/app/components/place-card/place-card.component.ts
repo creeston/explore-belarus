@@ -32,4 +32,16 @@ export class PlaceCard implements OnInit {
   previousImage() {
     this.currentImageIndex = (this.currentImageIndex - 1 + this.photos.length) %  this.photos.length;
   }
+
+  notInteresting() {
+
+  }
+
+  toVisit() {
+
+  }
+
+  visited() {
+    
+  }
 }

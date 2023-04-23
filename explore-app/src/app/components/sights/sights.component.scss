@@ -10,6 +10,10 @@ $base-length: 130px;
     margin: 0 auto;
 }
 
+.sights-container {
+    margin-top: 100px;
+}
+
 svg {
     margin-top: 30px;
     margin-left: auto;
@@ -99,4 +103,13 @@ svg {
     bottom: 0;
     right: 0;
     background: $purple;
+}
+
+
+.places-container {
+}
+
+
+.belarus-image {
+    position: fixed;
 }

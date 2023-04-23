@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "allowSyntheticDefaultImports": true,
-    "types": []
+    "types": [
+      "@angular/localize"
+    ]
   },
   "files": [
     "src/main.ts",
