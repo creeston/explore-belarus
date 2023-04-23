@@ -1,0 +1,21 @@
+<svg height="671" width="774" mlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <image href="assets/map.svg" height="671" width="774"/>
+</svg>
+
+
+<div *ngIf="places" class="row">
+  <div class="col" *ngFor="let place of places">
+    <app-place-card [place]="place"></app-place-card>
+  </div>
+</div>
+
+<div id="grid" [style.visibility]="gridLoading ? 'hidden': 'visible'">
+    <ng-masonry-grid (onNgMasonryInit)="onNgMasonryInit($event)" [masonryOptions]="{ transitionDuration: '0.8s', columnWidth: '.grid-sizer', percentPosition: true, itemSelector: '.grid-item' }" >
+      <div class="grid-sizer"></div>
+      <ng-masonry-grid-item id="{{'masonry-item-'+i}}" *ngFor="let sight of sights; let i = index;">
+        <div [routerLink]="['sight', sight.id]" (mouseenter)="enterSight(i)" (mouseleave)="leaveSight(i)" [ngClass]= "'sight' + sight.rate + ' grid-item'">
+          <div [ngClass]= "'innerSight' + sight.rate" [style.backgroundSize]="'cover'" [ngStyle]="setSightStyle(sight)"></div>
+        </div>
+      </ng-masonry-grid-item>
+    </ng-masonry-grid>
+  </div>

@@ -1,0 +1,40 @@
+<div class="card">
+    <div class="card-header">
+        {{ title }}
+    </div>
+    <div class="card-body">
+        <ngb-carousel *ngIf="photos" interval="null">
+            <ng-template ngbSlide *ngFor="let photo of photos">
+                <div class="image-container">
+                    <div class="overlay"></div>
+                    <img [src]="photo" />
+                </div>
+            </ng-template>
+        </ngb-carousel>
+    </div>
+    <!-- <div class="image-container">
+        <div class="overlay"></div>
+        <img [src]="currentImage" />
+      </div>
+      <div class="controls">
+        <div class="left-arrow" (click)="previousImage()">
+          <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="right-arrow" (click)="nextImage()">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+    -->
+    <div class="card-footer">
+        <div class="icon-button" (click)="visited()">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="icon-button" (click)="toVisit()">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="icon-button" (click)="notInteresting()">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+</div>

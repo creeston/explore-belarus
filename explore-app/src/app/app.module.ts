@@ -5,17 +5,24 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgMasonryGridModule } from 'ng-masonry-grid';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { RouteComponent } from './route/route.component';
-import { RoutesComponent } from './routes/routes.component'
+import { RouteComponent } from './components/route/route.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { SightsService } from './shared/services/sights.service';
+import { RoutesComponent } from './components/routes/routes.component';
+import { SightsComponent } from './components/sights/sights.component';
+import { FormsModule } from '@angular/forms';
+import { PlaceCard } from './components/place-card/place-card.component';
+import { NgbCarouselModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     RouteComponent,
-    RoutesComponent
+    RoutesComponent,
+    SightsComponent,
+    PlaceCard
   ],
   imports: [
     BrowserModule,
@@ -23,9 +30,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     NgMasonryGridModule,
     NgxSpinnerModule,
     HttpClientModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    FormsModule,
+    NgbCarouselModule,
+    NgbModule
   ],
-  providers: [],
+  providers: [SightsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

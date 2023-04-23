@@ -1,0 +1,83 @@
+$white: #F9FCFA;
+$black: #000411;
+$gray: #AEB7B3;
+$yellow: #F3D991;
+$purple: #40384F;
+$base-length: 130px;
+
+#grid {
+    width: 8 * $base-length + 20;
+    margin: 0 auto;
+}
+
+svg {
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.grid-item, .grid-sizer { width: 12.5%; }
+
+.grid-item {
+    box-sizing: border-box;
+    border: 10px solid white;
+}
+
+.route1 {
+    width: 12.5%;
+}
+
+.route1:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.innerRoute1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: $yellow;
+}
+
+.route2 {
+    background: $gray;
+    width: 25%;
+}
+
+.route2:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.innerRoute2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: $gray;
+}
+
+.route3 {
+    width: 37.5%;
+}
+
+.route3:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+
+.innerRoute3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: $yellow;
+}

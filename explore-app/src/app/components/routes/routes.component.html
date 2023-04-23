@@ -1,0 +1,14 @@
+<svg width="200" height="200" mlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <image href="assets/belarus-map-icon - Copy.png" height="200" width="200"/>
+</svg>
+
+<div id="grid" [style.visibility]="gridLoading ? 'hidden': 'visible'">
+    <ng-masonry-grid (onNgMasonryInit)="onNgMasonryInit($event)" [masonryOptions]="{ transitionDuration: '0.8s', columnWidth: '.grid-sizer', percentPosition: true, itemSelector: '.grid-item' }" >
+      <div class="grid-sizer"></div>
+      <ng-masonry-grid-item id="{{'masonry-item-'+i}}" *ngFor="let route of routes; let i = index;">
+        <div [routerLink]="['route', '1']" (mouseenter)="enterRoute(i)" (mouseleave)="leaveRoute(i)" [ngClass]= "'route' + route.size + ' grid-item'">
+          <div [ngClass]= "'innerRoute' + route.size" [style.backgroundSize]="'cover'" [ngStyle]="setRouteStyle(route)"></div>
+        </div>
+      </ng-masonry-grid-item>
+    </ng-masonry-grid>
+  </div>

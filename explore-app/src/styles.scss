@@ -4,6 +4,8 @@ $gray: #AEB7B3;
 $yellow: #F3D991;
 $purple: #40384F;
 
+@import "bootstrap/scss/bootstrap";
+
 .flex-container {
     display: flex;                       
     flex-wrap: wrap;                     
