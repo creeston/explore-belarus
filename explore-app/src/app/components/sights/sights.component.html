@@ -1,22 +1,84 @@
-<div class="row sights-container">
-  <div class="col-3">
-    <svg attr.height="{{height}}px" attr.width="{{width}}px" mlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="belarus-image">
-      <image href="assets/map - black.svg" attr.height="{{height}}px" attr.width="{{width}}px"/>
-  </svg>
-  </div>
-  <div class="col-9">
-    <div class="row">
-      <p-dropdown [options]="regions" [(ngModel)]="selectedRegion" ></p-dropdown>
-    </div>
-    <div *ngIf="places" class="row places-container mt-3" infinite-scroll [infiniteScrollDistance]="2"
-    [infiniteScrollThrottle]="1000"
-    (scrolled)="onScroll()">
-      <div class="col" *ngFor="let place of places; let i = index;" (mouseenter)="enterPlace(i)" (mouseleave)="leavePlace(i)">
-        <app-place-card [place]="place"></app-place-card>
+<div class="container-fluid">
+  <div class="row g-0">
+    <div class="col-3">
+      <div class="sticky-top">
+        <div class="row">
+          <svg attr.height="{{height}}px" attr.width="{{width}}px" mlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+            <image href="assets/map - black.svg" attr.height="{{height}}px" attr.width="{{width}}px" />
+            <g *ngIf="activeIndex === 0">
+              <circle *ngFor="let place of places" attr.cx="{{getPlaceCoordX(place)}}"
+                attr.cy="{{getPlaceCoordY(place)}}" r="1" style="fill: #F3D991; stroke: #F3D991; stroke-width: 1px;"
+                attr.id="place{{place.id}}"></circle>
+            </g>
+            <g *ngIf="activeIndex === 1">
+              <circle *ngFor="let place of highlightedPlaces" attr.cx="{{getPlaceCoordX(place)}}"
+                attr.cy="{{getPlaceCoordY(place)}}" r="1" style="fill: #F3D991; stroke: #F3D991; stroke-width: 1px;"
+                attr.id="place{{place.id}}"></circle>
+            </g>
+            <g *ngIf="activeIndex === 2">
+              <circle *ngFor="let place of visitedPlaces" attr.cx="{{getPlaceCoordX(place)}}"
+                attr.cy="{{getPlaceCoordY(place)}}" r="1" style="fill: #F3D991; stroke: #F3D991; stroke-width: 1px;"
+                attr.id="place{{place.id}}"></circle>
+            </g>
+
+          </svg>
+        </div>
+        <div class="row mt-3">
+          <p-multiSelect [options]="regions" [(ngModel)]="selectedRegions" placeholder="Выберите область"
+            (onChange)="filterData()" autoWidth="false" [style]="{'width':'100%', 'maxHeight': '48px'}"
+            [showHeader]="false"></p-multiSelect>
+        </div>
+        <div class="row mt-3">
+          <p-multiSelect [options]="ratings" [(ngModel)]="selectedRatings" placeholder="Выберите рейтинг"
+            (onChange)="filterData()" autoWidth="false" [style]="{'width':'100%', 'maxHeight': '48px'}"
+            [showHeader]="false"></p-multiSelect>
+        </div>
       </div>
+
+    </div>
+    <div class="col-1">
+      <p-divider layout="vertical" />
+    </div>
+    <div class="col-8">
+      <div class="row g-0">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input type="text" pInputText [(ngModel)]="searchValue" (ngModelChange)="filterData()" />
+        </span>
+      </div>
+      <div *ngIf="places" class="row places-container mt-3">
+        <p-tabView [(activeIndex)]="activeIndex">
+          <p-tabPanel header="Города">
+            <div class="row" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="1000"
+              (scrolled)="onScroll()">
+              <div class="col" *ngFor="let place of nonVisitedPlaces; let i = index;">
+                <app-place-card [place]="place" (hover)="onHover($event, place)"></app-place-card>
+              </div>
+            </div>
+          </p-tabPanel>
+          <p-tabPanel header="Хочу посетить">
+            <div class="row">
+              <div class="col" *ngFor="let place of highlightedPlaces; let i = index;">
+                <app-place-card [place]="place" (hover)="onHover($event, place)"></app-place-card>
+              </div>
+            </div>
+          </p-tabPanel>
+          <p-tabPanel header="Посещенные">
+            <div class="row">
+              <div class="col" *ngFor="let place of visitedPlaces; let i = index;">
+                <app-place-card [place]="place" (hover)="onHover($event, place)"></app-place-card>
+              </div>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+
     </div>
   </div>
 </div>
+
+
 
 
 <!-- <div id="grid" [style.visibility]="gridLoading ? 'hidden': 'visible'">

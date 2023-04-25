@@ -1,8 +1,11 @@
+import { ViewportScroller } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import $ from 'jquery';
 import { SelectItem } from 'primeng/api';
+import { lastValueFrom } from 'rxjs';
 import { Place, Sight } from 'src/app/shared/models/place';
 import { SightsService } from 'src/app/shared/services/sights.service';
+import { UserPreferences, UserPreferencesService } from 'src/app/shared/services/user-preferences.service';
 
 @Component({
     selector: 'app-sights',
@@ -12,6 +15,8 @@ import { SightsService } from 'src/app/shared/services/sights.service';
 export class SightsComponent implements OnInit {
     places: Place[];
     allPlaces: Place[];
+    allPlacesFiltered: Place[];
+    preferences: UserPreferences;
 
     height = 335;
     width = 387;
@@ -24,7 +29,24 @@ export class SightsComponent implements OnInit {
     screenWidth: number;
     screenHeight: number;
 
-    selectedRegion: SelectItem;
+    selectedRegions: string[];
+    selectedRatings: number[];
+    searchValue: string;
+    activeIndex: number;
+
+    batchSize = 50;
+
+    get highlightedPlaces() {
+        return this.places.filter(p => this.preferences.isPlaceSelected(p.id));
+    }
+
+    get visitedPlaces() {
+        return this.places.filter(p => this.preferences.isPlaceVisited(p.id));
+    }
+
+    get nonVisitedPlaces() {
+        return this.places.filter(p => !this.preferences.isPlaceVisited(p.id));
+    }
 
     regions: SelectItem[] = [
         { label: 'Минская область', value: 'Минская' },
@@ -34,37 +56,73 @@ export class SightsComponent implements OnInit {
         { label: 'Витебская область', value: 'Витебская' }
     ]
 
-    ngOnInit() {
-        this.sightsService.listPlaces().subscribe(data => {
-            this.allPlaces = data.filter(p => p.sights.filter(s => s.image).length > 0);
-            this.places = this.allPlaces.slice(0, 50);
-            this.drawPoints();
-        });
+    ratings: SelectItem[] = [
+        { label: 'Увидеть обязательно', value: 1 },
+        { label: 'Увидеть интересно', value: 2 },
+        { label: 'Норм', value: 3 },
+        { label: 'Посмотреть по дороге', value: 4 },
+    ]
+
+    constructor(
+        private sightsService: SightsService,
+        private scroller: ViewportScroller,
+        private preferencesService: UserPreferencesService
+    ) {
     }
 
+    async ngOnInit() {
+        this.activeIndex = 0;
+        this.preferences = await lastValueFrom(this.preferencesService.getUserPreferences());
+        this.allPlaces = (await lastValueFrom(this.sightsService.listPlaces()))
+            .filter(p => p.sights.filter(s => s.image).length > 0)
+            .sort((a, b) => a.rating - b.rating);;
+
+        this.allPlacesFiltered = this.allPlaces;
+        this.places = this.allPlacesFiltered.slice(0, this.batchSize);
+        this.preferencesService.currentPreferences$.subscribe(p => {
+            this.preferences = p;
+        })
+    }
+
+    filterData() {
+        this.allPlacesFiltered = [];
+
+        for (let place of this.allPlaces) {
+            if (this.selectedRegions && this.selectedRegions.length > 0) {
+                const placeLocation = place.location.toLowerCase();
+                if (!this.selectedRegions.find(region => placeLocation.indexOf(region.toLowerCase()) >= 0)) {
+                    continue;
+                }
+            }
+
+            if (this.selectedRatings && this.selectedRatings.length > 0) {
+                if (!this.selectedRatings.find(rating => place.rating === rating)) {
+                    continue;
+                }
+            }
+
+            if (this.searchValue) {
+                const search = this.searchValue.toLowerCase();
+                if (place.name.toLowerCase().indexOf(search) < 0) {
+                    continue
+                }
+            }
+
+            this.allPlacesFiltered.push(place);
+        }
+
+        this.places = this.allPlacesFiltered.slice(0, this.batchSize);
+        this.scroller.scrollToPosition([0, 0]);
+    }
 
     onScroll(): void {
-        const chunk = this.allPlaces.slice(this.places.length, this.places.length + 50);
-        chunk.forEach((place) => {
-            this.drawPlaceCoord(place);
-        });
+        const chunk = this.allPlacesFiltered.slice(this.places.length, this.places.length + this.batchSize);
         this.places.push(...chunk);
-      }
-
-    constructor(private sightsService: SightsService) {
-    }
-
-    drawPoints() {
-        this.places.forEach((place, index) => {
-            // setTimeout(() => this.drawSightCoord(sight), index % 500);
-            // this.drawSightCoord(sight);
-            this.drawPlaceCoord(place);
-        });
     }
 
     drawPlaceCoord(place: Place) {
-        const id = '#place' + place.id;
-        $(id).remove();
+        const id = 'place' + place.id;
+        $('#' + id).remove();
 
         if (!place.coords) {
             return;
@@ -75,24 +133,35 @@ export class SightsComponent implements OnInit {
         this.drawPoint(coord, 1, id);
     }
 
-    enterPlace(i) {
-        const place = this.places[i];
-        this.drawPlaceSelectedCoord(place);
+    getPlaceCoordX(place: Place) {
+        const [lat, long] = place.coords;
+        const coord = this.transformCoordinates(+lat, +long);
+        return coord[0];
     }
 
-    leavePlace(i) {
-        const place = this.places[i];
+    getPlaceCoordY(place: Place) {
+        const [lat, long] = place.coords;
+        const coord = this.transformCoordinates(+lat, +long);
+        return coord[1];
+    }
+
+    onHover(entered: boolean, place: Place) {
+        console.log('on hover ' + entered + ' ' + place.id);
         $('#selected' + place.id).remove();
+
+        if (entered) {
+            this.drawPlaceSelectedCoord(place);
+        }
     }
 
     drawPlaceSelectedCoord(place: Place) {
-        const id = 'selected' + place.id;
         if (!place.coords) {
             return;
         }
 
         const [lat, long] = place.coords;
         const coord = this.transformCoordinates(+lat, +long);
+        const id = 'selected' + place.id;
         this.drawPoint(coord, 4, id);
     }
 
@@ -105,12 +174,12 @@ export class SightsComponent implements OnInit {
         circle.setAttributeNS(null, 'id', id);
         $('svg').append(circle);
 
-        circle.addEventListener('mouseover', function (event) {
-            const target = event.target as SVGCircleElement;
-            if (target.tagName === 'circle') {
-                console.log('Hovered over circle with id:', target.id);
-            }
-        });
+        // circle.addEventListener('mouseover', function (event) {
+        //     const target = event.target as SVGCircleElement;
+        //     if (target.tagName === 'circle') {
+        //         console.log('Hovered over circle with id:', target.id);
+        //     }
+        // });
     }
 
     transformCoordinates(realLat: number, realLong: number) {
@@ -131,32 +200,5 @@ export class SightsComponent implements OnInit {
         const y = (realLat - yOffset) * yScale;
 
         return [x, this.height - y];
-    }
-
-    delay(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    setSightStyle(sight: Sight) {
-        if (sight.image === null) {
-            return {};
-        }
-
-        if (sight.rate === 2) {
-            return {
-                'background-image': 'linear-gradient(rgba(174, 183, 179, .4), rgba(174, 183, 179, .4)), url(' + sight.image + ')',
-                'background-repeat': 'cover',
-                'background-size': 'cover'
-            };
-        }
-
-        if (sight.rate === 1 || sight.rate === 3) {
-            return {
-                'background-image': 'linear-gradient(rgba(243, 217, 145, .4), rgba(243, 217, 145, .4)), url(' + sight.image + ')',
-                'background-repeat': 'cover',
-                'background-size': 'cover'
-            };
-        }
-        return {};
     }
 }

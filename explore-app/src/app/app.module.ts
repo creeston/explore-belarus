@@ -13,6 +13,13 @@ import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { InputTextModule } from 'primeng/inputtext';
+import { DividerModule } from 'primeng/divider';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { UserPreferencesService } from './shared/services/user-preferences.service';
+import { TabViewModule } from 'primeng/tabview';
+import { ButtonModule } from 'primeng/button';
+
 
 @NgModule({
   declarations: [
@@ -29,10 +36,15 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     NgbModule,
     CommonModule,
     DropdownModule,
+    MultiSelectModule,
     BrowserAnimationsModule,
-    InfiniteScrollModule 
+    InfiniteScrollModule,
+    InputTextModule,
+    TabViewModule,
+    DividerModule,
+    ButtonModule
   ],
-  providers: [SightsService],
+  providers: [SightsService, UserPreferencesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

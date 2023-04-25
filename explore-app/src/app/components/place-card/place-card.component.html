@@ -1,7 +1,7 @@
-<div class="place-card">
-    <div class="place-card-header">
+<div class="place-card" (mouseenter)="enterPlace()" (mouseleave)="leavePlace()">
+    <!-- <div class="place-card-header">
         {{ title }}
-    </div>
+    </div> -->
     <div class="place-card-body">
         <ngb-carousel *ngIf="place.sights" interval="null">
             <ng-template ngbSlide *ngFor="let image of photos">
@@ -11,30 +11,20 @@
                 </div>
             </ng-template>
         </ngb-carousel>
-    </div>
-    <!-- <div class="image-container">
-        <div class="overlay"></div>
-        <img [src]="currentImage" />
-      </div>
-      <div class="controls">
-        <div class="left-arrow" (click)="previousImage()">
-          <i class="fas fa-chevron-left"></i>
+        <div class="place-distance" *ngIf="distance">
+            ~{{distance.toFixed(0)}} км
         </div>
-        <div class="right-arrow" (click)="nextImage()">
-          <i class="fas fa-chevron-right"></i>
-        </div>
-      </div>
     </div>
-    -->
+    <div class="place-card-title">
+        <h5>{{ title }}</h5>
+        <small> {{ place.location }} </small>
+    </div>
     <div class="place-card-footer">
-        <div class="icon-button" (click)="visited()">
-            <i class="fas fa-check"></i>
-        </div>
-        <div class="icon-button" (click)="toVisit()">
-            <i class="fas fa-map-marker-alt"></i>
-        </div>
-        <div class="icon-button" (click)="notInteresting()">
-            <i class="fas fa-times"></i>
-        </div>
+        <p-button *ngIf="!isVisited" icon="pi pi-check" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="visited()"></p-button>
+        <p-button *ngIf="isVisited" icon="pi pi-check-square" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="removeVisited()"></p-button>
+
+        <p-button icon="pi pi-external-link" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="openPlaceUrl()"></p-button>
+        <p-button *ngIf="!isHighlighted" icon="pi pi-bookmark" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="toVisit()"></p-button>
+        <p-button *ngIf="isHighlighted" icon="pi pi-bookmark-fill" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="removeToVisit()"></p-button>
     </div>
 </div>
