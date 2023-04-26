@@ -1,5 +1,5 @@
 import { ViewportScroller } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import $ from 'jquery';
 import { SelectItem } from 'primeng/api';
 import { lastValueFrom } from 'rxjs';
@@ -16,7 +16,13 @@ export class SightsComponent implements OnInit {
     places: Place[];
     allPlaces: Place[];
     allPlacesFiltered: Place[];
+
+    sights: Sight[];
+    allSights: Sight[];
+
     preferences: UserPreferences;
+
+    @ViewChild('mapContainer') mapContainer : ElementRef;
 
     height = 335;
     width = 387;
@@ -33,11 +39,16 @@ export class SightsComponent implements OnInit {
     selectedRatings: number[];
     searchValue: string;
     activeIndex: number;
+    rangeValue: number;
+    showOnlyNonVisited: boolean;
+    viewSelector: string;
+
+    innerWidth: any;
 
     batchSize = 50;
 
     get highlightedPlaces() {
-        return this.places.filter(p => this.preferences.isPlaceSelected(p.id));
+        return this.places.filter(p => this.preferences.isPlaceBookmarked(p.id));
     }
 
     get visitedPlaces() {
@@ -70,18 +81,54 @@ export class SightsComponent implements OnInit {
     ) {
     }
 
-    async ngOnInit() {
-        this.activeIndex = 0;
-        this.preferences = await lastValueFrom(this.preferencesService.getUserPreferences());
-        this.allPlaces = (await lastValueFrom(this.sightsService.listPlaces()))
-            .filter(p => p.sights.filter(s => s.image).length > 0)
-            .sort((a, b) => a.rating - b.rating);;
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        this.innerWidth = window.innerWidth;
+        this.resizeMap();
+    }
 
-        this.allPlacesFiltered = this.allPlaces;
-        this.places = this.allPlacesFiltered.slice(0, this.batchSize);
+    async ngOnInit() {
+        this.rangeValue = 500;
+        this.activeIndex = 0;
+        this.showOnlyNonVisited = false;
+        this.viewSelector = 'places';
+        this.innerWidth = window.innerWidth;
+        console.log(this.innerWidth);
+
+        this.preferences = await lastValueFrom(this.preferencesService.getUserPreferences());
         this.preferencesService.currentPreferences$.subscribe(p => {
             this.preferences = p;
         })
+        
+        this.sightsService.listPlaces().subscribe(data => {
+            data = data
+                    .filter(p => p.sights.filter(s => s.image).length > 0)
+                    .map(p => {
+                        const location = p.location;
+                        const parts = location.split(',').map(p => p.trim());
+                        p.location = parts.slice(-2).join(', ');
+                        return p;
+                    })
+                    .sort((a, b) => a.rating - b.rating);;
+            this.allPlaces = data;
+            this.allPlacesFiltered = data;
+            this.places = this.allPlacesFiltered.slice(0, this.batchSize);
+        })
+
+        this.sightsService.listSights().subscribe(data => {
+            this.allSights = data.filter(sight => sight.image && sight.rate !== null).sort((a, b) => a.rate  - b.rate);
+            this.sights = this.allSights.slice(0, this.batchSize);
+        });
+
+        this.resizeMap();
+    }
+
+    resizeMap() {
+        const originalHeight = 1342;
+        const originalWidth = 1548;
+        const mapContainerWidth = this.mapContainer.nativeElement.offsetWidth;
+        this.width = mapContainerWidth;
+        this.height = Math.floor(mapContainerWidth * originalHeight / originalWidth);
     }
 
     filterData() {
@@ -108,16 +155,36 @@ export class SightsComponent implements OnInit {
                 }
             }
 
+            if (this.showOnlyNonVisited) {
+                if (this.preferences.isPlaceVisited(place.id)) {
+                    continue;
+                }
+            }
+
             this.allPlacesFiltered.push(place);
         }
 
         this.places = this.allPlacesFiltered.slice(0, this.batchSize);
-        this.scroller.scrollToPosition([0, 0]);
+        this.scroller.scrollToAnchor("mapContainer");
+    }
+
+    resetFilters() {
+        this.selectedRatings = [];
+        this.selectedRegions = [];
+        this.showOnlyNonVisited = false;
+        this.searchValue = null;
+
+        this.filterData();
     }
 
     onScroll(): void {
         const chunk = this.allPlacesFiltered.slice(this.places.length, this.places.length + this.batchSize);
         this.places.push(...chunk);
+    }
+
+    onSightsScroll(): void {
+        const chunk = this.allSights.slice(this.sights.length, this.sights.length + this.batchSize);
+        this.sights.push(...chunk);
     }
 
     drawPlaceCoord(place: Place) {

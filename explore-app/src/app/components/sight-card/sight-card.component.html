@@ -1,0 +1,21 @@
+<div class="place-card" (mouseenter)="enterPlace()" (mouseleave)="leavePlace()">
+    <div class="place-card-body">
+        <div class="image-container">
+            <div class="overlay"></div>
+            <img [src]="photo" />
+        </div>
+    </div>
+    <div class="place-card-title">
+        <h5>{{ title }}</h5>
+        <small> {{ sight.place.name }} </small>
+    </div>
+    <div class="place-card-footer">
+        <p-button icon="pi pi-check"
+            styleClass="p-button-rounded p-button-secondary p-button-text"></p-button>
+
+        <p-button icon="pi pi-external-link" styleClass="p-button-rounded p-button-secondary p-button-text"></p-button>
+
+        <p-button icon="pi pi-bookmark"
+            styleClass="p-button-rounded p-button-secondary p-button-text"></p-button>
+    </div>
+</div>

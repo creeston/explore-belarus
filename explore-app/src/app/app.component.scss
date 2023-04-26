@@ -25,17 +25,86 @@ body {
 
 #logo {
     width: 100%;
-    margin-top: 30px;
-    h1 {
-        text-align: center;
-        font-size: 4em;
+    height: 250px;
+
+    .title {
+        position: fixed;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+    
+        h1 {
+            text-align: center;
+            font-size: calc(4.5vw + 4vh);
+        }
+
+        p {
+            text-align: center;
+        }
+    
+        a {
+            color: #6e6e8b;
+            text-decoration: none;
+            font-weight: bold;
+        }
     }
+
+    .image-container {
+        position: relative;
+    }
+
+    .second-image {
+        position: absolute;
+        background-image: url('/assets/pole_dorosh-17  without sky.png');
+        background-position-y: -190px;
+        background-position-x: -80px;
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        left: 0px;
+    }
+
+    background-image: url('/assets/pole_dorosh-17 (1).png');
+    // background-image: url('/assets/pole_dorosh-17 with sky.png');
+    color: white;
+    // background: #a0a39a;
+    padding-bottom: 50px;
+    // padding-top: 25px;
+    // background-position-y: -200px;
+    background-position-x: -80px;
+
+    background-position-y: -190px;
+    /* background-repeat: no-repeat; */
+    /* object-fit: cover; */
+
+    // -webkit-filter: grayscale(100%);
+    // filter: grayscale(100%);
 }
 
-#menu {
-    width: 300px;
+.content-container {
+    padding-top: 50px;
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    position: relative;
+    top: -32px;
+    background: white;
+
+    @media (min-width: 800px) {
+        padding-left: 50px;
+        padding-right: 50px;
+      }
+}
+
+.menu {
+    width: 500px;
     height: 1px;
     margin: 0 auto;
+
+    list-style: none;
+
+    li {
+        cursor: pointer;
+    }
 
     a {
         font-family: 'Raleway', sans-serif;

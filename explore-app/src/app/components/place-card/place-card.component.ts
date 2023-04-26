@@ -16,7 +16,7 @@ export class PlaceCard implements OnInit {
   preferences: UserPreferences;
 
   get isHighlighted() {
-    return this.preferences.isPlaceSelected(this.place.id);
+    return this.preferences.isPlaceBookmarked(this.place.id);
   }
 
   get isVisited() {
@@ -40,14 +40,6 @@ export class PlaceCard implements OnInit {
     window.open(this.place.url, "_blank");
   }
 
-  notInteresting() {
-    this.preferencesService.setAsNonInteresting(this.place.id);
-  }
-
-  removeFromNotInteresting() {
-    this.preferencesService.removeAsNonInteresting(this.place.id);
-  }
-
   toVisit() {
     this.preferencesService.setToVisit(this.place.id);
   }
@@ -57,13 +49,7 @@ export class PlaceCard implements OnInit {
   }
 
   visited() {
-    // We send signal that place will be left, because after marking it as visited it will appear on different view
-    this.leavePlace();
-    this.preferencesService.setAsVisited(this.place.id).subscribe({
-      error: error => {
-        this.enterPlace();
-      }
-    });
+    this.preferencesService.setAsVisited(this.place.id);
   }
 
   removeVisited() {

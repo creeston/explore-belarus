@@ -19,13 +19,20 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { UserPreferencesService } from './shared/services/user-preferences.service';
 import { TabViewModule } from 'primeng/tabview';
 import { ButtonModule } from 'primeng/button';
+import { MatTabsModule } from '@angular/material/tabs';
+import { SliderModule } from 'primeng/slider';
+import { CheckboxModule } from 'primeng/checkbox';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MatIconModule} from '@angular/material/icon';
+import { SightCard } from './components/sight-card/sight-card.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     SightsComponent,
-    PlaceCard
+    PlaceCard,
+    SightCard
   ],
   imports: [
     BrowserModule,
@@ -42,7 +49,12 @@ import { ButtonModule } from 'primeng/button';
     InputTextModule,
     TabViewModule,
     DividerModule,
-    ButtonModule
+    ButtonModule,
+    MatTabsModule,
+    SliderModule,
+    CheckboxModule,
+    MatButtonToggleModule,
+    MatIconModule
   ],
   providers: [SightsService, UserPreferencesService],
   bootstrap: [AppComponent]

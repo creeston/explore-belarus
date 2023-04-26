@@ -11,15 +11,37 @@ export class UserPreferences {
     location: number[];
 
     constructor() {
-        
+
     }
 
-    isPlaceSelected(placeId: number) {
+    isPlaceBookmarked(placeId: number) {
         return this.highlightedPlaces.indexOf(placeId) >= 0
+    }
+
+    bookmarkPlace(placeId: number) {
+        this.highlightedPlaces.push(placeId);
+    }
+
+    unbookmarkPlace(placeId: number) {
+        const index = this.highlightedPlaces.indexOf(placeId);
+        if (index > -1) {
+            this.highlightedPlaces.splice(index, 1);
+        }
     }
 
     isPlaceVisited(placeId: number) {
         return this.visitedPlaces.indexOf(placeId) >= 0
+    }
+
+    visitPlace(placeId: number) {
+        this.visitedPlaces.push(placeId);
+    }
+
+    unvisitPlace(placeId: number) {
+        const index = this.visitedPlaces.indexOf(placeId);
+        if (index > -1) {
+            this.visitedPlaces.splice(index, 1);
+        }
     }
 }
 
@@ -27,7 +49,7 @@ export class UserPreferences {
 export class UserPreferencesService {
     currentPreferences: UserPreferences;
     userId = 1;
-    
+
     get currentPreferences$() {
         return this.subject.asObservable();
     }
@@ -45,77 +67,52 @@ export class UserPreferencesService {
     }
 
     setToVisit(placeId: number) {
+        if (this.currentPreferences.isPlaceBookmarked(placeId)) {
+            return;
+        }
+
         return this.updateEntity((preferences) => {
-            preferences.highlightedPlaces.push(placeId);
+            preferences.bookmarkPlace(placeId);
         })
     }
 
     removeToVisit(placeId) {
-        if (this.currentPreferences.highlightedPlaces.indexOf(placeId) < 0) {
+        if (!this.currentPreferences.isPlaceBookmarked(placeId)) {
             return;
         }
 
         return this.updateEntity((preferences) => {
-            const index = preferences.highlightedPlaces.indexOf(placeId);
-            if (index > -1) {
-                preferences.highlightedPlaces.splice(index, 1);
-            }
+            preferences.unbookmarkPlace(placeId);
         })
     }
 
     setAsVisited(placeId: number) {
-        if (this.currentPreferences.visitedPlaces.indexOf(placeId) >= 0) {
+        if (this.currentPreferences.isPlaceVisited(placeId)) {
             return;
         }
 
         return this.updateEntity((preferences) => {
-            preferences.visitedPlaces.push(placeId);
+            preferences.visitPlace(placeId);
         })
     }
 
     removeAsVisited(placeId) {
-        if (this.currentPreferences.visitedPlaces.indexOf(placeId) < 0) {
+        if (!this.currentPreferences.isPlaceVisited(placeId)) {
             return;
         }
 
         return this.updateEntity((preferences) => {
-            const index = preferences.visitedPlaces.indexOf(placeId);
-            if (index > -1) {
-                preferences.visitedPlaces.splice(index, 1);
-            }
-        })
-    }
-
-    setAsNonInteresting(placeId: number) {
-        if (this.currentPreferences.ignoredPlaces.indexOf(placeId) >= 0) {
-            return;
-        }
-
-        return this.updateEntity((preferences) => {
-            preferences.ignoredPlaces.push(placeId);
-        })
-    }
-
-    removeAsNonInteresting(placeId) {
-        if (this.currentPreferences.ignoredPlaces.indexOf(placeId) < 0) {
-            return;
-        }
-
-        return this.updateEntity((preferences) => {
-            const index = preferences.ignoredPlaces.indexOf(placeId);
-            if (index > -1) {
-                preferences.ignoredPlaces.splice(index, 1);
-            }
+            preferences.unvisitPlace(placeId);
         })
     }
 
     private updateEntity(updator: (UserPreferences) => void) {
         const data = this.currentPreferences;
         updator(data);
-        return this.httpClient.patch("http://localhost:3000/userPreferences/" + this.currentPreferences.id, this.currentPreferences).pipe(
-            map(r => {
+        return this.httpClient.patch("http://localhost:3000/userPreferences/" + this.currentPreferences.id, data).subscribe(
+            r => {
                 this.subject.next(this.currentPreferences);
                 return r;
-            }));
+            });
     }
 }

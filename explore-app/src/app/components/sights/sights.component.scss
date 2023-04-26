@@ -14,11 +14,22 @@ $base-length: 130px;
     margin-top: 100px;
 }
 
+.reset-button {
+    font-size: 0.95em;
+    text-decoration: none;
+    padding: 0px;
+}
+
 svg {
     margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
     display: block;
+}
+
+.view-selector-button {
+    width: 200px;
+    display: inline-block;
 }
 
 .grid-item, .grid-sizer { width: 10%; }

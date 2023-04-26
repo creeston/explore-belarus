@@ -24,6 +24,7 @@
         <p-button *ngIf="isVisited" icon="pi pi-check-square" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="removeVisited()"></p-button>
 
         <p-button icon="pi pi-external-link" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="openPlaceUrl()"></p-button>
+
         <p-button *ngIf="!isHighlighted" icon="pi pi-bookmark" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="toVisit()"></p-button>
         <p-button *ngIf="isHighlighted" icon="pi pi-bookmark-fill" styleClass="p-button-rounded p-button-secondary p-button-text" (click)="removeToVisit()"></p-button>
     </div>
