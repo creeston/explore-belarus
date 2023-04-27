@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, Subject, map, of } from "rxjs";
+import { environment } from "src/environments/environment";
 
 export class UserPreferences {
     highlightedPlaces: number[];
@@ -47,6 +48,8 @@ export class UserPreferences {
 
 @Injectable()
 export class UserPreferencesService {
+    private apiUrl: string;
+
     currentPreferences: UserPreferences;
     userId = 1;
 
@@ -57,6 +60,7 @@ export class UserPreferencesService {
     subject: Subject<UserPreferences> = new Subject();
 
     constructor(private httpClient: HttpClient) {
+        this.apiUrl = environment.apiUrl;
     }
 
     getUserPreferences(): Observable<UserPreferences> {
