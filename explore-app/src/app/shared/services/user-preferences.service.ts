@@ -64,7 +64,7 @@ export class UserPreferencesService {
     }
 
     getUserPreferences(): Observable<UserPreferences> {
-        return this.httpClient.get("http://localhost:3000/userPreferences?userId=" + this.userId)
+        return this.httpClient.get(this.apiUrl + "/userPreferences?userId=" + this.userId)
             .pipe(
                 map(value => Object.assign(new UserPreferences(), value[0])),
                 map(p => { this.currentPreferences = p; return this.currentPreferences; }));
@@ -113,7 +113,7 @@ export class UserPreferencesService {
     private updateEntity(updator: (UserPreferences) => void) {
         const data = this.currentPreferences;
         updator(data);
-        return this.httpClient.patch("http://localhost:3000/userPreferences/" + this.currentPreferences.id, data).subscribe(
+        return this.httpClient.patch(this.apiUrl + "/userPreferences/" + this.currentPreferences.id, data).subscribe(
             r => {
                 this.subject.next(this.currentPreferences);
                 return r;
