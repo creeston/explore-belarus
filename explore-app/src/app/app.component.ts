@@ -13,7 +13,7 @@ export class AppComponent {
   
   ngOnInit() {
     if (!environment.production) {
-      this.title += ' dev';
+      this.title;
     }
 
    }

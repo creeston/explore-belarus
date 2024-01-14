@@ -2,6 +2,26 @@
   <div class="row g-0">
     <div class="col-lg-3" #mapContainer id="mapContainer">
       <div class="sticky-top">
+        <div class="col-12 col-sm-auto d-flex justify-content-center">
+          <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+          <!-- <mat-button-toggle-group [(ngModel)]="viewSelector">
+            <mat-button-toggle value="places">
+              <mat-icon fontIcon="home_work"></mat-icon>
+              <span *ngIf="innerWidth > 1000" class="view-selector-button">Каталог</span>
+            </mat-button-toggle>
+
+            <mat-button-toggle value="plans">
+              <mat-icon fontIcon="edit_calendar"></mat-icon>
+              <span *ngIf="innerWidth > 1000" class="view-selector-button">Планы</span>
+            </mat-button-toggle>
+
+            <mat-button-toggle value="plans">
+              <mat-icon fontIcon="done_all"></mat-icon>
+              <span *ngIf="innerWidth > 1000" class="view-selector-button">Посещенные</span>
+            </mat-button-toggle>
+
+          </mat-button-toggle-group> -->
+        </div>
         <div class="row">
           <svg attr.height="{{height}}px" attr.width="{{width}}px" mlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -69,6 +89,9 @@
             <label for="binary">Только непосещенные места</label>
           </div>
         </div>
+        <!-- <div class="row mt-auto powered-by-text">
+          <p>Powered by <a href="https://globustut.by/" target="_blank">globustut.by</a></p>
+        </div> -->
       </div>
 
     </div>
@@ -104,13 +127,15 @@
           <mat-button-toggle-group [(ngModel)]="viewSelector">
             <mat-button-toggle value="places">
               <mat-icon fontIcon="home_work"></mat-icon>
-              <span *ngIf="innerWidth > 1000" class="view-selector-button">Населенные пункты</span>
+              <span *ngIf="innerWidth > 1000" class="view-selector-button">Места</span>
               
             </mat-button-toggle>
             <mat-button-toggle value="sights">
               <mat-icon fontIcon="church"></mat-icon>
               <span *ngIf="innerWidth > 1000" class="view-selector-button">Достопримечательности</span>
             </mat-button-toggle>
+
+
           </mat-button-toggle-group>
         </div>
         <div class="col">
@@ -159,8 +184,8 @@
           </div>
         </div>
         <div *ngIf="viewSelector === 'sights'" class="row" infinite-scroll [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="1000" (scrolled)="onSightsScroll()">
-          <div class="col" *ngFor="let sight of sights; let i = index;">
+         [infiniteScrollThrottle]="1000" (scrolled)="onSightsScroll()" [class.g-0]="innerWidth < 500">
+          <div class="col-12 col-sm d-flex justify-content-center" *ngFor="let sight of sights; let i = index;">
             <app-sight-card [sight]="sight" (hover)="onHover($event, sight.place)"></app-sight-card>
           </div>
         </div>

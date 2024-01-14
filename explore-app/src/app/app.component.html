@@ -1,26 +1,15 @@
 <div>
-  <!-- <img src="assets/dragon.png" id="dragon">
-  <img src="assets/stars.png" id="stars"> -->
-  <div id="logo">
+  <div id="logo" class="d-flex justify-content-end">
+    <p-button icon="pi pi-home" [text]="true" class="p-mr-2 p-link"></p-button>
+    <p-button icon="pi pi-info-circle" [text]="true" class="p-mr-2 p-link"></p-button>
+    <p-button icon="pi pi-sign-in p-link" [text]="true"></p-button>
     <div class="title">
       <h1>{{title}}</h1>
     </div>
-    <div class="second-image">
-
-    </div>
     <!-- <p>Powered by <a href="https://globustut.by/" target="_blank">globustut.by</a></p> -->
-    <!-- <div class="flex-container menu">
-      <li>
-        Города
-      </li>
-      <li>
-        Достопримечательности
-      </li>
-      <li>
-        Маршруты
-      </li>
-    </div> -->
   </div>
+
+
 
   <div class="content-container">
     <router-outlet></router-outlet>

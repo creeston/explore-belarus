@@ -1,7 +1,7 @@
 import { ViewportScroller } from '@angular/common';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import $ from 'jquery';
-import { SelectItem } from 'primeng/api';
+import { MenuItem, SelectItem } from 'primeng/api';
 import { lastValueFrom } from 'rxjs';
 import { Place, Sight } from 'src/app/shared/models/place';
 import { SightsService } from 'src/app/shared/services/sights.service';
@@ -74,11 +74,16 @@ export class SightsComponent implements OnInit {
         { label: 'Посмотреть по дороге', value: 4 },
     ]
 
+    items: MenuItem[] | undefined;
+
+    activeItem: MenuItem | undefined;
+
     constructor(
         private sightsService: SightsService,
         private scroller: ViewportScroller,
         private preferencesService: UserPreferencesService
     ) {
+
     }
 
     @HostListener('window:resize', ['$event'])
@@ -121,6 +126,14 @@ export class SightsComponent implements OnInit {
         });
 
         this.resizeMap();
+
+        this.items = [
+            { label: 'Каталог', icon: 'pi pi-fw pi-home' },
+            { label: 'Планы', icon: 'pi pi-fw pi-calendar' },
+            { label: 'Посещенные', icon: 'pi pi-fw pi-check-circle' }
+        ];
+
+        this.activeItem = this.items[0];
     }
 
     resizeMap() {
