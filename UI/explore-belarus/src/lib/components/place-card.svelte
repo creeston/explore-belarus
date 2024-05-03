@@ -36,12 +36,6 @@
     <div class="place-card-footer"></div>
 </div>
 
-{#if showJson}
-    <div class="p-3">
-        <pre>{JSON.stringify(place, undefined, 4)}</pre>
-    </div>
-{/if}
-
 <style lang="scss">
     .place-card {
         width: 300px;
