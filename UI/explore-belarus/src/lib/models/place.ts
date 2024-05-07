@@ -3,7 +3,7 @@ export interface Place {
     url: string;
     rating: number;
     photo_count: string;
-    coords: string[];
+    coords: [string, string];
     location: string;
     sights: PlaceSight[];
     id: number;
@@ -27,5 +27,5 @@ export interface PlaceSight {
 
 export interface PlaceSelection {
     name: string;
-    coords: [number, number];
+    coords: [string, string];
 }

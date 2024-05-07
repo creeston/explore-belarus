@@ -1,42 +1,187 @@
 <script lang="ts">
-    export let place: any;
-    let image = null;
+    import { Bookmark, Check, Icon, Link, MapPin } from "svelte-hero-icons";
+    import PlaceModal from "./place-modal.svelte";
+    import type { Place } from "$lib/models/place";
 
-    const sights = place.sights;
-    const sightsWithImage = sights.filter((sight: any) => sight.image);
-    if (sightsWithImage.length > 0) {
-        image = sightsWithImage[0].image;
-    }
+    export let place: Place;
+    $: sights = place.sights;
+    $: sightsWithImage = sights.filter((sight: any) => sight.image);
+    $: image = sightsWithImage.length > 0 ? sightsWithImage[0].image : null;
 
-    let showJson = false;
+    const preprocessLocation = (location: string) => {
+        // split by comma and get last two parts
+        const parts = location.split(",");
+        return parts.slice(parts.length - 2).join(",");
+    };
 
-    const toggleJson = () => {
-        showJson = !showJson;
+    $: location = preprocessLocation(place.location);
+
+    let markedAsPlanned = false;
+    let markedAsVisited = false;
+
+    const showModal = () => {
+        const modal = document.getElementById(`my_modal_${place.id}`) as any;
+        modal.showModal();
     };
 </script>
 
-<div
-    class="place-card m-5"
-    role="button"
-    tabindex="0"
-    on:click={toggleJson}
-    on:keydown={toggleJson}
->
+<!-- svelte-ignore a11y-interactive-supports-focus -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="place-card m-5">
     <div class="place-card-body">
         <div class="image-container">
             <div class="overlay"></div>
             <img src={image} alt={place.name} />
+            <div class="card-action">
+                {#if !markedAsPlanned}
+                    <button
+                        class="btn btn-square btn-sm btn-ghost"
+                        on:click={() => {
+                            markedAsPlanned = true;
+                        }}
+                    >
+                        <Icon src={Bookmark} size="20" color="#fff" />
+                    </button>
+                {/if}
+                {#if markedAsPlanned}
+                    <button
+                        class="btn btn-square btn-sm btn-success"
+                        on:click={() => {
+                            markedAsPlanned = false;
+                        }}
+                    >
+                        <Icon src={Bookmark} size="20" class="btn-neutral" />
+                    </button>
+                {/if}
+
+                {#if markedAsVisited}
+                    <button
+                        class="btn btn-square btn-sm btn-success"
+                        on:click={() => {
+                            markedAsVisited = false;
+                        }}
+                    >
+                        <Icon src={Check} size="20" class="btn-neutral" />
+                    </button>
+                {/if}
+                {#if !markedAsVisited}
+                    <button
+                        class="btn btn-square btn-sm btn-ghost"
+                        on:click={() => {
+                            markedAsVisited = true;
+                        }}
+                    >
+                        <Icon src={Check} size="20" color="#fff" />
+                    </button>
+                {/if}
+            </div>
         </div>
-        <div class="place-distance">{place.rating}</div>
     </div>
     <div class="place-card-title">
         <h5>{place.name}</h5>
-        <small> {place.location} </small>
+        <small> {location} </small>
     </div>
-    <div class="place-card-footer"></div>
+    <div class="place-card-footer">
+        <div class="dropdown">
+            <div
+                tabindex="0"
+                role="button"
+                class="btn btn-circle btn-sm btn-ghost"
+            >
+                <Icon src={MapPin} size="20"></Icon>
+            </div>
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <ul
+                tabindex="0"
+                class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+                <li>
+                    <a
+                        href={`https://www.google.com/maps/@${place.coords[0]},${place.coords[1]},15z`}
+                        target="_blank">Google Maps</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href={`https://orda.of.by/.map/?${place.coords[0]},${place.coords[1]}&m=roadmap/13`}
+                        target="_blank"
+                    >
+                        Orda</a
+                    >
+                </li>
+            </ul>
+        </div>
+
+        <a class="btn btn-ghost btn-sm" href={place.url} target="_blank"
+            ><Icon src={Link} size="10" /> globustut</a
+        >
+        <a
+            class="btn btn-ghost btn-sm"
+            href={`https://orda.of.by/.map/?${place.coords[0]},${place.coords[1]}&m=roadmap/13`}
+            target="_blank"><Icon src={Link} size="10" /> 34travel</a
+        >
+    </div>
 </div>
 
+<!-- Put this part before </body> tag -->
+<!-- <input type="checkbox" id="my_modal_7" class="modal-toggle" /> -->
+<PlaceModal {place} />
+
+<!-- <dialog id="my_modal_{place.id}" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">{place.name}</h3>
+        <div class="carousel w-96">
+            {#each sightsWithImage as sight, i}
+                <div
+                    id="slide_{place.id}_{i}"
+                    class="carousel-item relative w-full"
+                >
+                    <img
+                        src={sight.image}
+                        alt={sight.name}
+                        on:click={showModal}
+                    />
+                    <div
+                        class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2"
+                    >
+                        {#if i > 0}
+                            <a
+                                href="#slide_{place.id}_{i - 1}"
+                                class="btn btn-circle">❮</a
+                            >
+                        {/if}
+                        {#if i == 0}
+                            <div class="btn btn-circle"></div>
+                        {/if}
+
+                        {#if i < sightsWithImage.length - 1}
+                            <a
+                                href="#slide_{place.id}_{i + 1}"
+                                class="btn btn-circle">❯</a
+                            >
+                        {/if}
+                    </div>
+                </div>
+            {/each}
+        </div>
+
+        <p class="py-4">Press ESC key or click outside to close</p>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog> -->
+
 <style lang="scss">
+    .card-action {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+
+        .btn-ghost {
+            background-color: #00000012;
+        }
+    }
     .place-card {
         width: 300px;
         // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -107,7 +252,7 @@
             right: 0;
             bottom: 0;
             left: 0;
-            background-color: rgba(243, 217, 145, 0.2);
+            background-color: rgba(243, 217, 145, 0.15);
         }
 
         img {
@@ -129,7 +274,7 @@
 
     .left-arrow,
     .right-arrow {
-        cursor: pointer;
+        // cursor: pointer;
     }
 
     .place-card-footer {
@@ -139,7 +284,7 @@
     }
 
     .icon-button {
-        cursor: pointer;
+        // cursor: pointer;
     }
 
     .place-card-title {

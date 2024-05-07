@@ -1,8 +1,13 @@
 <script lang="ts">
-    import { Icon, Sparkles, BuildingLibrary } from "svelte-hero-icons";
+    import {
+        Icon,
+        Sparkles,
+        Check,
+        Bookmark,
+        GlobeAlt,
+    } from "svelte-hero-icons";
     import "../../app.css";
     import type { PlaceSelection } from "$lib/models/place";
-    import CitiesInput from "./cities-input.svelte";
 
     export let places: PlaceSelection[];
 </script>
@@ -17,12 +22,18 @@
         <ul class="menu menu-horizontal px-1">
             <li><a href="/"><Icon src={Sparkles} size="14" /> Sights</a></li>
             <li>
-                <a href="/"><Icon src={BuildingLibrary} size="14" />Places</a>
+                <a href="/"><Icon src={Bookmark} size="14" />Planned</a>
+            </li>
+            <li>
+                <a href="/"><Icon src={Check} size="14" />Visited</a>
             </li>
         </ul>
     </div>
 
     <div class="navbar-end">
-        <CitiesInput {places}></CitiesInput>
+        <button class="btn mr-10">
+            <Icon src={GlobeAlt} size="24" /> бел
+        </button>
+        <!-- <CitiesInput {places}></CitiesInput> -->
     </div>
 </div>
