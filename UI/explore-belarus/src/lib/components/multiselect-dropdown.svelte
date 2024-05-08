@@ -81,20 +81,6 @@
                 </li>
             {/each}
         {/each}
-
-        <!-- <h3>Globus</h3>
-        {#each options as option, index}
-            <li on:click={() => onOptionSelect(option.value, index)}>
-                <div class="flex">
-                    <div class="grow">{option.viewValue}</div>
-                    <input
-                        type="checkbox"
-                        checked={checkedOptions[index]}
-                        class="checkbox"
-                    />
-                </div>
-            </li>
-        {/each} -->
     </ul>
 </div>
 
@@ -103,8 +89,7 @@
         h3 {
             font-size: 1rem;
             font-weight: 500;
-            margin-left: 0.5rem;
-            margin-top: 0.5rem;
+            margin: 0.5rem;
             cursor: default;
         }
     }

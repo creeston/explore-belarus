@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Place, PlaceSight } from "$lib/models/place";
-    import { Icon, Link, ArrowPath } from "svelte-hero-icons";
+    import { Icon, Link, Bookmark, Check, MapPin } from "svelte-hero-icons";
     import Carousel from "svelte-carousel";
     import Map from "./map.svelte";
 
@@ -74,7 +74,7 @@
             {/key}
         </div>
 
-        <div>
+        <div class="hidden lg:block">
             {#if place}
                 <Map
                     height={250}
@@ -87,7 +87,7 @@
             {/if}
         </div>
 
-        <div class="w-72">
+        <div class="hero-description">
             <h1 class="text-5xl font-bold pb-5">
                 {place?.name}
             </h1>
@@ -99,19 +99,36 @@
 
             <div class="h-12">
                 <a class="btn btn-ghost" href={place?.url} target="_blank">
-                    <Icon src={Link} size="14" /> Подробнее
+                    <Icon src={Link} size="14" /> globustut
                 </a>
-                <button class="btn btn-circle ml-5" on:click={refreshPlace}
+                <a class="btn btn-ghost" href={place?.url} target="_blank">
+                    <Icon src={Link} size="14" /> 34travel
+                </a>
+                <button class="btn btn-ghost">
+                    <Icon src={MapPin} size="18" />
+                </button>
+                <button class="btn btn-ghost">
+                    <Icon src={Bookmark} size="18" />
+                </button>
+                <button class="btn btn-ghost">
+                    <Icon src={Check} size="18" />
+                </button>
+                <!-- <button class="btn btn-circle ml-5" on:click={refreshPlace}
                     ><Icon src={ArrowPath} size="14" /></button
-                >
+                > -->
             </div>
         </div>
     </div>
 </div>
 
 <style lang="scss">
+    .hero-description {
+        width: calc(100vw - 20px);
+        max-width: 400px;
+    }
     .hero-image {
-        width: 450px;
+        width: calc(100vw - 20px);
+        max-width: 450px;
     }
 
     .one-sight-image {
@@ -121,5 +138,50 @@
     .sight-image {
         min-width: 390px;
         max-width: 390px;
+    }
+
+    .custom-arrow.svelte-4bw00n.svelte-4bw00n {
+        width: 20px;
+        background-color: #000000;
+        opacity: 0.3;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 1;
+        transition: opacity 150ms ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .custom-arrow:hover {
+        opacity: 0.5;
+    }
+
+    .custom-arrow > i {
+        border: solid #1e1e1e;
+        border-width: 0 5px 5px 0;
+        padding: 5px;
+        position: relative;
+    }
+
+    .custom-arrow-prev {
+        left: 0;
+    }
+
+    .custom-arrow-prev > i {
+        transform: rotate(135deg);
+        right: -4px;
+    }
+
+    .custom-arrow-next {
+        right: 0;
+    }
+
+    .custom-arrow-next > i {
+        transform: rotate(-45deg);
+        left: -4px;
     }
 </style>

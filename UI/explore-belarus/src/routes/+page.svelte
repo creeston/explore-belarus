@@ -3,23 +3,21 @@
     import PlaceCard from "$lib/components/place-card.svelte";
     import SightHero from "$lib/components/place-hero.svelte";
     import InfiniteScroll from "svelte-infinite-scroll";
-    import type { Place, PlaceSelection } from "$lib/models/place";
+    import type { Place } from "$lib/models/place";
     import "../app.css";
     import GeoFilterDropdown from "$lib/components/geo-filter-dropdown.svelte";
     import RatingFilterDropdown from "$lib/components/rating-filter-dropdown.svelte";
     import { AdjustmentsHorizontal, Icon, XMark } from "svelte-hero-icons";
     import type { SelectOption } from "$lib/models/select-option";
+    import { visited } from "$lib/stores/visited-store";
+    import { userPerformedFirstAction } from "$lib/stores/event-store";
+    import { t, locale, locales } from "../i18n";
 
     export let data;
 
     const allPlacesData: Place[] = data.props.places.sort(
         (a: Place, b: Place) => a.rating - b.rating
     );
-
-    const placesSelection: PlaceSelection[] = allPlacesData.map((place) => ({
-        name: place.name,
-        coords: place.coords,
-    }));
 
     const geoFilterOptions: SelectOption[] = [
         { viewValue: "Минская", value: "Минская" },
@@ -60,11 +58,34 @@
         placesToDisplay = places.splice(size * page, size * (page + 1) - 1);
     };
 
+    const filterDataByNonVisisted = (e: any) => {
+        page = 0;
+        if (hideVisited) {
+            places = allPlacesData.filter((place) => {
+                return !$visited.some(
+                    (visitedPlace) => visitedPlace.placeId === place.id
+                );
+            });
+        } else {
+            places = [...allPlacesData];
+        }
+        placesToDisplay = places.splice(size * page, size * (page + 1) - 1);
+    };
+
     let page = 0;
     let size = 20;
     let placesToDisplay: Place[] = [];
     let showFilters = true;
     let places = [...allPlacesData];
+    let hideVisited = false;
+    let hidePlanned = false;
+    let storageWarnModal: any;
+
+    $: userPerformedFirstAction.subscribe((hasPerformedAction) => {
+        if (hasPerformedAction && storageWarnModal) {
+            storageWarnModal.showModal();
+        }
+    });
 
     $: placesToDisplay = [
         ...placesToDisplay,
@@ -72,14 +93,14 @@
     ];
 </script>
 
-<Navbar places={placesSelection}></Navbar>
+<Navbar selectedMenu="sights"></Navbar>
 
 <SightHero places={allPlacesData} />
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 
-<div class="flex mt-5 space-x-4 ml-10 items-center">
+<div class="mt-5 space-x-4 ml-10 items-center hidden md:flex">
     <label class="btn btn-circle swap swap-rotate">
         <input type="checkbox" bind:checked={showFilters} />
         <Icon
@@ -109,8 +130,25 @@
     <div class="form-control">
         {#if showFilters}
             <label class="label cursor-pointer">
-                <span class="label-text">Только непосещенные</span>
-                <input type="checkbox" class="toggle ml-4" checked />
+                <span class="label-text">Без посещенных</span>
+                <input
+                    type="checkbox"
+                    class="toggle ml-4"
+                    bind:checked={hideVisited}
+                    on:change={filterDataByNonVisisted}
+                />
+            </label>
+        {/if}
+    </div>
+    <div class="form-control">
+        {#if showFilters}
+            <label class="label cursor-pointer">
+                <span class="label-text">Без запланированных</span>
+                <input
+                    type="checkbox"
+                    class="toggle ml-4"
+                    bind:checked={hidePlanned}
+                />
             </label>
         {/if}
     </div>
@@ -124,6 +162,18 @@
     {/each}
     <InfiniteScroll threshold={100} on:loadMore={() => page++} window={true} />
 </ul>
+
+<dialog id="storageWarnModal" class="modal" bind:this={storageWarnModal}>
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">{$t("user.storageWarnTitle")}</h3>
+        <p class="py-4">{$t("user.storageWarnDescription")}</p>
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn">{$t("actions.ok")}</button>
+            </form>
+        </div>
+    </div>
+</dialog>
 
 <style>
     ul {

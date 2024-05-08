@@ -1,7 +1,11 @@
 <script lang="ts">
     import { Bookmark, Check, Icon, Link, MapPin } from "svelte-hero-icons";
-    import PlaceModal from "./place-modal.svelte";
     import type { Place } from "$lib/models/place";
+    import { planned } from "$lib/stores/planned-store";
+    import { visited } from "$lib/stores/visited-store";
+    import { t, locale } from "../../i18n";
+    import { userInfo } from "$lib/stores/user-store";
+    import { userPerformedFirstAction } from "$lib/stores/event-store";
 
     export let place: Place;
     $: sights = place.sights;
@@ -9,46 +13,77 @@
     $: image = sightsWithImage.length > 0 ? sightsWithImage[0].image : null;
 
     const preprocessLocation = (location: string) => {
-        // split by comma and get last two parts
         const parts = location.split(",");
         return parts.slice(parts.length - 2).join(",");
     };
 
     $: location = preprocessLocation(place.location);
 
-    let markedAsPlanned = false;
-    let markedAsVisited = false;
+    $: markedAsPlanned = $planned.some(
+        (plannedPlace) => plannedPlace.placeId === place.id
+    );
+    $: markedAsVisited = $visited.some(
+        (visitedPlace) => visitedPlace.placeId === place.id
+    );
 
-    const showModal = () => {
-        const modal = document.getElementById(`my_modal_${place.id}`) as any;
-        modal.showModal();
+    const markAsPlanned = () => {
+        planned.update((planned) => [...planned, { placeId: place.id }]);
+        if (!$userInfo.hasPerformedAction) {
+            userInfo.update((user) => ({ ...user, hasPerformedAction: true }));
+            userPerformedFirstAction.set(true);
+        }
     };
+
+    const unmarkAsPlanned = () => {
+        planned.update((planned) =>
+            planned.filter((plannedPlace) => plannedPlace.placeId !== place.id)
+        );
+    };
+
+    const markAsVisited = () => {
+        visited.update((visited) => [...visited, { placeId: place.id }]);
+    };
+
+    const unmarkAsVisited = () => {
+        visited.update((visited) =>
+            visited.filter((visitedPlace) => visitedPlace.placeId !== place.id)
+        );
+    };
+
+    let isHovered = false;
 </script>
 
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="place-card m-5">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<div
+    class="place-card m-5"
+    on:mouseover={() => (isHovered = true)}
+    on:mouseout={() => (isHovered = false)}
+>
     <div class="place-card-body">
         <div class="image-container">
             <div class="overlay"></div>
             <img src={image} alt={place.name} />
-            <div class="card-action">
+            <div class="card-action" class:card-action-visible={isHovered}>
                 {#if !markedAsPlanned}
-                    <button
-                        class="btn btn-square btn-sm btn-ghost"
-                        on:click={() => {
-                            markedAsPlanned = true;
-                        }}
+                    <div
+                        class="tooltip tooltip-left"
+                        data-tip={$t("placecard.markAsPlannedTooltip")}
                     >
-                        <Icon src={Bookmark} size="20" color="#fff" />
-                    </button>
+                        <button
+                            class="btn btn-square btn-sm btn-ghost"
+                            on:click={markAsPlanned}
+                        >
+                            <Icon src={Bookmark} size="20" color="#fff" />
+                        </button>
+                    </div>
                 {/if}
                 {#if markedAsPlanned}
                     <button
                         class="btn btn-square btn-sm btn-success"
-                        on:click={() => {
-                            markedAsPlanned = false;
-                        }}
+                        on:click={unmarkAsPlanned}
                     >
                         <Icon src={Bookmark} size="20" class="btn-neutral" />
                     </button>
@@ -57,22 +92,23 @@
                 {#if markedAsVisited}
                     <button
                         class="btn btn-square btn-sm btn-success"
-                        on:click={() => {
-                            markedAsVisited = false;
-                        }}
+                        on:click={unmarkAsVisited}
                     >
                         <Icon src={Check} size="20" class="btn-neutral" />
                     </button>
                 {/if}
                 {#if !markedAsVisited}
-                    <button
-                        class="btn btn-square btn-sm btn-ghost"
-                        on:click={() => {
-                            markedAsVisited = true;
-                        }}
+                    <div
+                        class="tooltip tooltip-left"
+                        data-tip={$t("placecard.markAsVisitedTooltip")}
                     >
-                        <Icon src={Check} size="20" color="#fff" />
-                    </button>
+                        <button
+                            class="btn btn-square btn-sm btn-ghost"
+                            on:click={markAsVisited}
+                        >
+                            <Icon src={Check} size="20" color="#fff" />
+                        </button>
+                    </div>
                 {/if}
             </div>
         </div>
@@ -123,65 +159,23 @@
     </div>
 </div>
 
-<!-- Put this part before </body> tag -->
-<!-- <input type="checkbox" id="my_modal_7" class="modal-toggle" /> -->
-<PlaceModal {place} />
-
-<!-- <dialog id="my_modal_{place.id}" class="modal">
-    <div class="modal-box">
-        <h3 class="font-bold text-lg">{place.name}</h3>
-        <div class="carousel w-96">
-            {#each sightsWithImage as sight, i}
-                <div
-                    id="slide_{place.id}_{i}"
-                    class="carousel-item relative w-full"
-                >
-                    <img
-                        src={sight.image}
-                        alt={sight.name}
-                        on:click={showModal}
-                    />
-                    <div
-                        class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2"
-                    >
-                        {#if i > 0}
-                            <a
-                                href="#slide_{place.id}_{i - 1}"
-                                class="btn btn-circle">❮</a
-                            >
-                        {/if}
-                        {#if i == 0}
-                            <div class="btn btn-circle"></div>
-                        {/if}
-
-                        {#if i < sightsWithImage.length - 1}
-                            <a
-                                href="#slide_{place.id}_{i + 1}"
-                                class="btn btn-circle">❯</a
-                            >
-                        {/if}
-                    </div>
-                </div>
-            {/each}
-        </div>
-
-        <p class="py-4">Press ESC key or click outside to close</p>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-        <button>close</button>
-    </form>
-</dialog> -->
-
 <style lang="scss">
     .card-action {
         position: absolute;
         top: 10px;
         right: 10px;
-
+        display: none;
+        opacity: 0;
         .btn-ghost {
             background-color: #00000012;
         }
     }
+
+    .card-action-visible {
+        display: block;
+        opacity: 1;
+    }
+
     .place-card {
         width: 300px;
         // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -272,19 +266,10 @@
         position: absolute;
     }
 
-    .left-arrow,
-    .right-arrow {
-        // cursor: pointer;
-    }
-
     .place-card-footer {
         display: flex;
         justify-content: space-around;
         padding: 10px;
-    }
-
-    .icon-button {
-        // cursor: pointer;
     }
 
     .place-card-title {
@@ -298,7 +283,7 @@
         }
 
         small {
-            font-size: 0.6em;
+            font-size: 0.7em;
         }
     }
 </style>
