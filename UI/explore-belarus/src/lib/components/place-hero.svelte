@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Place, PlaceSight } from "$lib/models/place";
-    import { Icon, Link, Bookmark, Check } from "svelte-hero-icons";
+    import { Icon, Link } from "svelte-hero-icons";
     import Carousel from "svelte-carousel";
     import Map from "./map.svelte";
     import GeoPinMenu from "./geo-pin-menu.svelte";
