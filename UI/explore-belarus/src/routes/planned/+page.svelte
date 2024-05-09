@@ -4,9 +4,8 @@
     import InfiniteScroll from "svelte-infinite-scroll";
     import type { Place } from "$lib/models/place";
     import "../../app.css";
-    import { userPerformedFirstAction } from "$lib/stores/event-store";
-    import Map from "$lib/components/map.svelte";
     import { planned } from "$lib/stores/planned-store";
+    import { t } from "../../i18n";
 
     export let data;
 
@@ -29,18 +28,11 @@
 
 <Navbar selectedMenu="planned"></Navbar>
 
-<div class="justify-center flex">
-    <Map
-        height={250}
-        width={250}
-        coord={placesToDisplay && placesToDisplay.length > 0
-            ? [
-                  parseFloat(placesToDisplay[0].coords[0]),
-                  parseFloat(placesToDisplay[0].coords[1]),
-              ]
-            : undefined}
-    ></Map>
-</div>
+{#if placesToDisplay.length === 0}
+    <div class="text-center text-2xl mt-10 empty-title text-slate-600">
+        {$t("planned.empty")}
+    </div>
+{/if}
 
 <ul class="flex flex-wrap justify-center">
     {#each placesToDisplay as place, i}
@@ -54,5 +46,9 @@
 <style>
     ul {
         max-height: 70vw;
+    }
+
+    .empty-title {
+        cursor: default;
     }
 </style>

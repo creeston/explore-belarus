@@ -4,8 +4,13 @@
     export let placeholderGenerator: (selectedOptions: string[]) => string;
     export let options: SelectOption[];
     export let onValueChange: (values: any[]) => void;
+    export let value: any[] | null = null;
 
-    $: checkedOptions = Array(options.length).fill(false);
+    $: checkedOptions = Array(options.length)
+        .fill(5)
+        .map((_, i) => {
+            return value?.includes(options[i].value) ?? false;
+        });
     $: groupedOptions = options.reduce((acc: any, option: any) => {
         if (!acc[option.group]) {
             acc[option.group] = [];
@@ -13,7 +18,7 @@
         acc[option.group].push(option);
         return acc;
     }, {});
-    let selectedOptions: any = [];
+    let selectedOptions: any = value ?? [];
     let button: any;
 
     const onOptionSelect = (option: any, index: number) => {

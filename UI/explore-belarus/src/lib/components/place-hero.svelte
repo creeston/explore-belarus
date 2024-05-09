@@ -1,8 +1,11 @@
 <script lang="ts">
     import type { Place, PlaceSight } from "$lib/models/place";
-    import { Icon, Link, Bookmark, Check, MapPin } from "svelte-hero-icons";
+    import { Icon, Link, Bookmark, Check } from "svelte-hero-icons";
     import Carousel from "svelte-carousel";
     import Map from "./map.svelte";
+    import GeoPinMenu from "./geo-pin-menu.svelte";
+    import VisitedButton from "./visited-button.svelte";
+    import PlanButton from "./plan-button.svelte";
 
     export let places: Place[];
     const placeCandidates = places
@@ -59,6 +62,7 @@
             {#key sights}
                 {#if sights && sights.length > 1}
                     <Carousel
+                        autoplay={true}
                         on:pageChange={onPageChanged}
                         bind:this={carousel}
                     >
@@ -97,26 +101,22 @@
                 </p>
             </div>
 
-            <div class="h-12">
-                <a class="btn btn-ghost" href={place?.url} target="_blank">
-                    <Icon src={Link} size="14" /> globustut
-                </a>
-                <a class="btn btn-ghost" href={place?.url} target="_blank">
-                    <Icon src={Link} size="14" /> 34travel
-                </a>
-                <button class="btn btn-ghost">
-                    <Icon src={MapPin} size="18" />
-                </button>
-                <button class="btn btn-ghost">
-                    <Icon src={Bookmark} size="18" />
-                </button>
-                <button class="btn btn-ghost">
-                    <Icon src={Check} size="18" />
-                </button>
-                <!-- <button class="btn btn-circle ml-5" on:click={refreshPlace}
+            {#if place}
+                <div class="h-12">
+                    <a class="btn btn-ghost" href={place?.url} target="_blank">
+                        <Icon src={Link} size="14" /> globustut
+                    </a>
+                    <a class="btn btn-ghost" href={place?.url} target="_blank">
+                        <Icon src={Link} size="14" /> 34travel
+                    </a>
+                    <GeoPinMenu {place}></GeoPinMenu>
+                    <PlanButton {place}></PlanButton>
+                    <VisitedButton {place}></VisitedButton>
+                    <!-- <button class="btn btn-circle ml-5" on:click={refreshPlace}
                     ><Icon src={ArrowPath} size="14" /></button
                 > -->
-            </div>
+                </div>
+            {/if}
         </div>
     </div>
 </div>

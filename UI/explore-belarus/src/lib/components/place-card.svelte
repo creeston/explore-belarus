@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { Bookmark, Check, Icon, Link, MapPin } from "svelte-hero-icons";
+    import { Icon, Link } from "svelte-hero-icons";
     import type { Place } from "$lib/models/place";
-    import { planned } from "$lib/stores/planned-store";
-    import { visited } from "$lib/stores/visited-store";
-    import { t, locale } from "../../i18n";
-    import { userInfo } from "$lib/stores/user-store";
-    import { userPerformedFirstAction } from "$lib/stores/event-store";
+    import GeoPinMenu from "./geo-pin-menu.svelte";
+    import PlanButton from "./plan-button.svelte";
+    import VisitedButton from "./visited-button.svelte";
 
     export let place: Place;
     $: sights = place.sights;
@@ -18,37 +16,6 @@
     };
 
     $: location = preprocessLocation(place.location);
-
-    $: markedAsPlanned = $planned.some(
-        (plannedPlace) => plannedPlace.placeId === place.id
-    );
-    $: markedAsVisited = $visited.some(
-        (visitedPlace) => visitedPlace.placeId === place.id
-    );
-
-    const markAsPlanned = () => {
-        planned.update((planned) => [...planned, { placeId: place.id }]);
-        if (!$userInfo.hasPerformedAction) {
-            userInfo.update((user) => ({ ...user, hasPerformedAction: true }));
-            userPerformedFirstAction.set(true);
-        }
-    };
-
-    const unmarkAsPlanned = () => {
-        planned.update((planned) =>
-            planned.filter((plannedPlace) => plannedPlace.placeId !== place.id)
-        );
-    };
-
-    const markAsVisited = () => {
-        visited.update((visited) => [...visited, { placeId: place.id }]);
-    };
-
-    const unmarkAsVisited = () => {
-        visited.update((visited) =>
-            visited.filter((visitedPlace) => visitedPlace.placeId !== place.id)
-        );
-    };
 
     let isHovered = false;
 </script>
@@ -67,49 +34,8 @@
             <div class="overlay"></div>
             <img src={image} alt={place.name} />
             <div class="card-action" class:card-action-visible={isHovered}>
-                {#if !markedAsPlanned}
-                    <div
-                        class="tooltip tooltip-left"
-                        data-tip={$t("placecard.markAsPlannedTooltip")}
-                    >
-                        <button
-                            class="btn btn-square btn-sm btn-ghost"
-                            on:click={markAsPlanned}
-                        >
-                            <Icon src={Bookmark} size="20" color="#fff" />
-                        </button>
-                    </div>
-                {/if}
-                {#if markedAsPlanned}
-                    <button
-                        class="btn btn-square btn-sm btn-success"
-                        on:click={unmarkAsPlanned}
-                    >
-                        <Icon src={Bookmark} size="20" class="btn-neutral" />
-                    </button>
-                {/if}
-
-                {#if markedAsVisited}
-                    <button
-                        class="btn btn-square btn-sm btn-success"
-                        on:click={unmarkAsVisited}
-                    >
-                        <Icon src={Check} size="20" class="btn-neutral" />
-                    </button>
-                {/if}
-                {#if !markedAsVisited}
-                    <div
-                        class="tooltip tooltip-left"
-                        data-tip={$t("placecard.markAsVisitedTooltip")}
-                    >
-                        <button
-                            class="btn btn-square btn-sm btn-ghost"
-                            on:click={markAsVisited}
-                        >
-                            <Icon src={Check} size="20" color="#fff" />
-                        </button>
-                    </div>
-                {/if}
+                <PlanButton {place} style={"ghost"}></PlanButton>
+                <VisitedButton {place} style={"ghost"}></VisitedButton>
             </div>
         </div>
     </div>
@@ -118,42 +44,16 @@
         <small> {location} </small>
     </div>
     <div class="place-card-footer">
-        <div class="dropdown">
-            <div
-                tabindex="0"
-                role="button"
-                class="btn btn-circle btn-sm btn-ghost"
-            >
-                <Icon src={MapPin} size="20"></Icon>
-            </div>
-            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <ul
-                tabindex="0"
-                class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-            >
-                <li>
-                    <a
-                        href={`https://www.google.com/maps/@${place.coords[0]},${place.coords[1]},15z`}
-                        target="_blank">Google Maps</a
-                    >
-                </li>
-                <li>
-                    <a
-                        href={`https://orda.of.by/.map/?${place.coords[0]},${place.coords[1]}&m=roadmap/13`}
-                        target="_blank"
-                    >
-                        Orda</a
-                    >
-                </li>
-            </ul>
-        </div>
+        <GeoPinMenu {place}></GeoPinMenu>
 
         <a class="btn btn-ghost btn-sm" href={place.url} target="_blank"
             ><Icon src={Link} size="10" /> globustut</a
         >
         <a
             class="btn btn-ghost btn-sm"
-            href={`https://orda.of.by/.map/?${place.coords[0]},${place.coords[1]}&m=roadmap/13`}
+            href={place && place.coords
+                ? `https://orda.of.by/.map/?${place.coords[0]},${place.coords[1]}&m=roadmap/13`
+                : "/"}
             target="_blank"><Icon src={Link} size="10" /> 34travel</a
         >
     </div>
@@ -174,6 +74,12 @@
     .card-action-visible {
         display: block;
         opacity: 1;
+
+        div {
+            button {
+                cursor: pointer;
+            }
+        }
     }
 
     .place-card {
@@ -196,18 +102,6 @@
         padding-right: 5px;
     }
 
-    .place-card-header {
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        text-align: center;
-        position: absolute;
-        width: 300px;
-        z-index: 2;
-        font-weight: bold;
-        padding-bottom: 10px;
-        padding-top: 10px;
-    }
-
     .place-card-body {
         display: flex;
         justify-content: center;
@@ -217,17 +111,6 @@
         position: relative;
         border-radius: 10px 10px 0px 0px;
         overflow: hidden;
-    }
-
-    .carousel-container {
-        width: 300px;
-        height: 400px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        background-color: #ccc;
-        position: relative;
     }
 
     .image-container {
@@ -254,16 +137,6 @@
             height: 100%;
             object-fit: cover;
         }
-    }
-
-    .controls {
-        width: 280px;
-        display: -webkit-box;
-        display: flex;
-        -webkit-box-pack: justify;
-        justify-content: space-between;
-        color: white;
-        position: absolute;
     }
 
     .place-card-footer {

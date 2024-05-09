@@ -6,6 +6,7 @@
         Bookmark,
         GlobeAlt,
         InformationCircle,
+        Map,
     } from "svelte-hero-icons";
     import "../../app.css";
     import { planned } from "$lib/stores/planned-store";
@@ -20,9 +21,10 @@
     const changeLocale = (locale: string) => {
         $locale = locale;
         userInfo.update((user) => ({ ...user, selectedLocale: locale }));
+        window.location.reload();
     };
 
-    $: (() => {
+    $: {
         if (!$userInfo.selectedLocale) {
             userInfo.update((user) => ({
                 ...user,
@@ -31,7 +33,7 @@
         } else {
             $locale = $userInfo.selectedLocale;
         }
-    })();
+    }
 
     const generateLanguageSelectionPlaceholder = (selectedOption: Locale) =>
         selectedOption ? locales[selectedOption].shortName : "N/A";
@@ -47,21 +49,21 @@
 <div class="navbar bg-base-100 border-b-slate-100 border-b-2 pl-10 pr-10">
     <div class="navbar-start">
         <a class="btn btn-ghost text-xl" href="/" target="_self">
-            <div>Explore Belarus ⛺</div>
+            <Icon src={Map} size="20"></Icon> Беларускі вандроўнік
         </a>
     </div>
     <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1 space-x-5">
             <li>
-                <a href="/" class:btn={selectedMenu === "sights"}
-                    ><Icon src={Sparkles} size="14" /> Sights
+                <a href="/" class:active={selectedMenu === "sights"}
+                    ><Icon src={Sparkles} size="14" /> {$t("navbar.sights")}
                 </a>
             </li>
             <li>
                 <a
                     href="/planned"
                     class="indicator"
-                    class:btn={selectedMenu === "planned"}
+                    class:active={selectedMenu === "planned"}
                 >
                     {#if $planned.length > 0 && $planned.length < 100}
                         <span class="indicator-item badge badge-ghost badge-sm"
@@ -82,7 +84,7 @@
                 <a
                     href="/visited"
                     class="indicator"
-                    class:btn={selectedMenu === "visited"}
+                    class:active={selectedMenu === "visited"}
                 >
                     {#if $visited.length > 0 && $visited.length < 100}
                         <span class="indicator-item badge badge-ghost badge-sm"
