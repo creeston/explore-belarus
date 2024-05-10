@@ -15,6 +15,7 @@
     import SelectDropdown from "./select-dropdown.svelte";
     import type { SelectOption } from "$lib/models/select-option";
     import { userInfo } from "$lib/stores/user-store";
+    import { base } from "$app/paths";
 
     export let selectedMenu: string = "sights";
 
@@ -57,13 +58,13 @@
     <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1 space-x-5">
             <li>
-                <a href="/" class:active={selectedMenu === "sights"}
+                <a href="{base}/" class:active={selectedMenu === "sights"}
                     ><Icon src={Sparkles} size="14" /> {$t("navbar.sights")}
                 </a>
             </li>
             <li>
                 <a
-                    href="/planned"
+                    href="{base}/planned"
                     class="indicator"
                     class:active={selectedMenu === "planned"}
                 >
@@ -84,7 +85,7 @@
 
             <li>
                 <a
-                    href="/visited"
+                    href="{base}/visited"
                     class="indicator"
                     class:active={selectedMenu === "visited"}
                 >
