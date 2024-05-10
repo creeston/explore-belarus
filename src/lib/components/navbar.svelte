@@ -51,7 +51,7 @@
 
 <div class="navbar bg-base-100 border-b-slate-100 border-b-2 pl-10 pr-10">
     <div class="navbar-start">
-        <a class="btn btn-ghost text-xl" href="/" target="_self">
+        <a class="btn btn-ghost text-xl" href="{base}/" target="_self">
             <Icon src={Map} size="20"></Icon> Беларускі вандроўнік
         </a>
     </div>
