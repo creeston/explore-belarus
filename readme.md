@@ -54,6 +54,3 @@ https://tailwindcss.com/docs
 Map reference
 https://svelte.dev/repl/33d086ab38fb42c48c39bd5f191fb890?version=3.46.6
 
-
-Autocomplete reference
-https://svelte.dev/repl/5734f123973d4682978427024ca90850?version=3.29.0
