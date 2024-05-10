@@ -5,16 +5,13 @@
     import InfiniteScroll from "svelte-infinite-scroll";
     import type { Place } from "$lib/models/place";
     import "../app.css";
-    import GeoFilterDropdown from "$lib/components/geo-filter-dropdown.svelte";
-    import RatingFilterDropdown from "$lib/components/rating-filter-dropdown.svelte";
-    import { AdjustmentsHorizontal, Icon, XMark } from "svelte-hero-icons";
-    import type { SelectOption } from "$lib/models/select-option";
     import { visited } from "$lib/stores/visited-store";
     import { planned } from "$lib/stores/planned-store";
     import { userPerformedFirstAction } from "$lib/stores/event-store";
-    import { t, locale, locales } from "../i18n";
+    import { t } from "../i18n";
     import type { FilterSpecification } from "$lib/models/filter-specification";
     import FilterBar from "$lib/components/filter-bar.svelte";
+    import { userInfo } from "$lib/stores/user-store";
 
     export let data;
 
@@ -58,10 +55,35 @@
         return filteredPlaces;
     };
 
+    // Commented functionality allosws to immediately filter places when user marks them as visited or planned
+    // However, in the current implementation, it is not user friendly
+
+    // $: visited.subscribe(() => {
+    //     if (!$userInfo.filterSpecification) {
+    //         return;
+    //     }
+
+    //     if ($userInfo.filterSpecification?.excludeVisited) {
+    //         places = getFilteredPlaces($userInfo.filterSpecification);
+    //         placesToDisplay = places.slice(0, size - 1);
+    //     }
+    // });
+
+    // $: planned.subscribe(() => {
+    //     if (!$userInfo.filterSpecification) {
+    //         return;
+    //     }
+
+    //     if ($userInfo.filterSpecification.excludePlanned) {
+    //         places = getFilteredPlaces($userInfo.filterSpecification);
+    //         placesToDisplay = places.slice(0, size - 1);
+    //     }
+    // });
+
     const filterData = (filter: FilterSpecification) => {
         page = 0;
         places = getFilteredPlaces(filter);
-        placesToDisplay = places.splice(size * page, size * (page + 1) - 1);
+        placesToDisplay = places.slice(0, size - 1);
     };
 
     const searchByText = (search: string, filter: FilterSpecification) => {
@@ -88,8 +110,14 @@
     let storageWarnModal: any;
 
     $: userPerformedFirstAction.subscribe((hasPerformedAction) => {
-        if (hasPerformedAction && storageWarnModal) {
+        if (
+            hasPerformedAction &&
+            !$userInfo.hasPerformedAction &&
+            storageWarnModal
+        ) {
             storageWarnModal.showModal();
+            $userInfo.hasPerformedAction = true;
+            // userInfo.update((user) => ({ ...user, hasPerformedAction: true }));
         }
     });
 
@@ -97,6 +125,8 @@
         ...placesToDisplay,
         ...places.splice(size * page, size * (page + 1) - 1),
     ];
+
+    // $: placesToDisplay = places.slice(0, size * (page + 1) - 1);
 </script>
 
 <Navbar selectedMenu="sights"></Navbar>
@@ -105,63 +135,6 @@
 
 <FilterBar onFilterChange={filterData} onSearchChange={searchByText}
 ></FilterBar>
-
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-
-<!-- <div class="mt-5 space-x-4 ml-10 items-center hidden md:flex">
-    <label class="btn btn-circle swap swap-rotate">
-        <input type="checkbox" bind:checked={showFilters} />
-        <Icon
-            src={AdjustmentsHorizontal}
-            width="32"
-            height="32"
-            class="swap-off fill-current"
-        />
-        <Icon src={XMark} width="32" height="32" class="swap-on" />
-    </label>
-    <div>
-        {#if showFilters}
-            <GeoFilterDropdown
-                options={geoFilterOptions}
-                onValueChange={filterDataByGeo}
-            ></GeoFilterDropdown>
-        {/if}
-    </div>
-    <div>
-        {#if showFilters}
-            <RatingFilterDropdown
-                options={ratingOptions}
-                onValueChange={filterDataByRating}
-            ></RatingFilterDropdown>
-        {/if}
-    </div>
-    <div class="form-control">
-        {#if showFilters}
-            <label class="label cursor-pointer">
-                <span class="label-text">Без посещенных</span>
-                <input
-                    type="checkbox"
-                    class="toggle ml-4"
-                    bind:checked={hideVisited}
-                    on:change={filterDataByNonVisisted}
-                />
-            </label>
-        {/if}
-    </div>
-    <div class="form-control">
-        {#if showFilters}
-            <label class="label cursor-pointer">
-                <span class="label-text">Без запланированных</span>
-                <input
-                    type="checkbox"
-                    class="toggle ml-4"
-                    bind:checked={hidePlanned}
-                />
-            </label>
-        {/if}
-    </div>
-</div> -->
 
 <ul class="flex flex-wrap justify-center">
     {#each placesToDisplay as place, i}

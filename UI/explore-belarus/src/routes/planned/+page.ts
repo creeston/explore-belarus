@@ -2,7 +2,7 @@ import type { PageLoad } from './$types';
 
 async function getPlacesData(event: any) {
     const response = await event.fetch(
-        `data/places_db.json`,
+        `data/places.json`,
         {
             method: "GET",
             headers: {
@@ -15,11 +15,9 @@ async function getPlacesData(event: any) {
 }
 
 export const load = (async (event) => {
-    const { places, sights } = await getPlacesData(event);
+    const places = await getPlacesData(event);
     return {
         props: {
-            title: 'Places',
-            description: 'Places in Belarus',
             places: places,
         },
     };

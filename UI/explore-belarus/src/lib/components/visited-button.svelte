@@ -3,6 +3,8 @@
     import { t } from "../../i18n";
     import type { Place } from "$lib/models/place";
     import { visited } from "$lib/stores/visited-store";
+    import { userInfo } from "$lib/stores/user-store";
+    import { userPerformedFirstAction } from "$lib/stores/event-store";
 
     export let place: Place;
     export let style: "ghost" | "normal" = "normal";
@@ -13,6 +15,10 @@
 
     const markAsVisited = () => {
         visited.update((visited) => [...visited, { placeId: place.id }]);
+        if (!$userInfo.hasPerformedAction) {
+            // userInfo.update((user) => ({ ...user, hasPerformedAction: true }));
+            userPerformedFirstAction.set(true);
+        }
     };
 
     const unmarkAsVisited = () => {

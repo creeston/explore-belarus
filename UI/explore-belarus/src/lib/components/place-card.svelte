@@ -4,8 +4,10 @@
     import GeoPinMenu from "./geo-pin-menu.svelte";
     import PlanButton from "./plan-button.svelte";
     import VisitedButton from "./visited-button.svelte";
+    import { createEventDispatcher } from "svelte";
 
     export let place: Place;
+    export let hovered: boolean = false;
     $: sights = place.sights;
     $: sightsWithImage = sights.filter((sight: any) => sight.image);
     $: image = sightsWithImage.length > 0 ? sightsWithImage[0].image : null;
@@ -16,8 +18,6 @@
     };
 
     $: location = preprocessLocation(place.location);
-
-    let isHovered = false;
 </script>
 
 <!-- svelte-ignore a11y-interactive-supports-focus -->
@@ -26,14 +26,14 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
     class="place-card m-5"
-    on:mouseover={() => (isHovered = true)}
-    on:mouseout={() => (isHovered = false)}
+    on:mouseover={() => (hovered = true)}
+    on:mouseout={() => (hovered = false)}
 >
     <div class="place-card-body">
         <div class="image-container">
             <div class="overlay"></div>
             <img src={image} alt={place.name} />
-            <div class="card-action" class:card-action-visible={isHovered}>
+            <div class="card-action" class:card-action-visible={hovered}>
                 <PlanButton {place} style={"ghost"}></PlanButton>
                 <VisitedButton {place} style={"ghost"}></VisitedButton>
             </div>
@@ -49,13 +49,14 @@
         <a class="btn btn-ghost btn-sm" href={place.url} target="_blank"
             ><Icon src={Link} size="10" /> globustut</a
         >
-        <a
+        <!-- Commnting until we integrate with 34travel -->
+        <!-- <a
             class="btn btn-ghost btn-sm"
             href={place && place.coords
                 ? `https://orda.of.by/.map/?${place.coords[0]},${place.coords[1]}&m=roadmap/13`
                 : "/"}
             target="_blank"><Icon src={Link} size="10" /> 34travel</a
-        >
+        > -->
     </div>
 </div>
 

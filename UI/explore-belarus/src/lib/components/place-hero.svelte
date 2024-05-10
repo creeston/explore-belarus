@@ -83,9 +83,11 @@
                 <Map
                     height={250}
                     width={250}
-                    coord={[
-                        parseFloat(place.coords[0]),
-                        parseFloat(place.coords[1]),
+                    coords={[
+                        [
+                            parseFloat(place.coords[0]),
+                            parseFloat(place.coords[1]),
+                        ],
                     ]}
                 />
             {/if}
@@ -106,9 +108,10 @@
                     <a class="btn btn-ghost" href={place?.url} target="_blank">
                         <Icon src={Link} size="14" /> globustut
                     </a>
-                    <a class="btn btn-ghost" href={place?.url} target="_blank">
+                    <!-- Commnting until we integrate with 34travel -->
+                    <!-- <a class="btn btn-ghost" href={place?.url} target="_blank">
                         <Icon src={Link} size="14" /> 34travel
-                    </a>
+                    </a> -->
                     <GeoPinMenu {place}></GeoPinMenu>
                     <PlanButton {place}></PlanButton>
                     <VisitedButton {place}></VisitedButton>

@@ -24,6 +24,8 @@
         window.location.reload();
     };
 
+    let infoModal: any;
+
     $: {
         if (!$userInfo.selectedLocale) {
             userInfo.update((user) => ({
@@ -113,8 +115,25 @@
             value={$locale}
             placeholderGenerator={generateLanguageSelectionPlaceholder}
         />
-        <button class="btn btn-circle ml-5">
+        <button class="btn btn-circle ml-5" on:click={infoModal.showModal()}>
             <Icon src={InformationCircle} size="26"></Icon>
         </button>
     </div>
+
+    <dialog id="infoModal" class="modal" bind:this={infoModal}>
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">{$t("about.title")}</h3>
+            <p class="py-4">{$t("about.description")}</p>
+            <a
+                class="link"
+                href="https://github.com/creeston/explore-belarus"
+                target="_blank">https://github.com/creeston/explore-belarus</a
+            >
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn">{$t("actions.close")}</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
 </div>

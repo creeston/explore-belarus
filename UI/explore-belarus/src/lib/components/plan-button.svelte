@@ -16,7 +16,6 @@
     const markAsPlanned = () => {
         planned.update((planned) => [...planned, { placeId: place.id }]);
         if (!$userInfo.hasPerformedAction) {
-            userInfo.update((user) => ({ ...user, hasPerformedAction: true }));
             userPerformedFirstAction.set(true);
         }
     };

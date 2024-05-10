@@ -1,7 +1,8 @@
 <script lang="ts">
     export let height = 500;
     export let width = 500;
-    export let coord: [number, number] | null | undefined = null;
+    export let coords: [number, number][] | null | undefined = null;
+    export let highlighedCoordIndex: number | null = null;
     import { onMount } from "svelte";
     import { geoPath } from "d3-geo";
     import * as d3 from "d3";
@@ -9,12 +10,14 @@
     const projection = d3
         .geoMercator()
         .center([28, 54])
-        .scale(1500)
+        .scale(height * 6)
         .translate([height / 2, width / 2]);
     const path = geoPath().projection(projection);
     let counties: any[] = [];
 
-    $: point = coord ? projection([coord[1], coord[0]]) : null;
+    $: points = coords
+        ? coords.map((coord) => projection([coord[1], coord[0]]))
+        : [];
 
     onMount(async () => {
         const response = await fetch(
@@ -26,26 +29,6 @@
         });
     });
 </script>
-
-<!-- <div>
-    <svg {width} {height}>
-        {#each counties as feature, i}
-            <path
-                d={path(feature)}
-                class="state"
-                stroke="rgb(182, 201, 207)"
-                fill="rgb(255, 255, 255)"
-                stroke-width="1px"
-            />
-        {/each}
-
-        {#if point}
-            <text x={point[0] - 8} y={point[1] + 4} style="font-size: 10px;">
-                ⭐
-            </text>
-        {/if}
-    </svg>
-</div> -->
 
 <div>
     <svg {width} {height}>
@@ -59,11 +42,27 @@
             />
         {/each}
 
-        {#if point}
-            <text x={point[0] - 8} y={point[1] + 4} style="font-size: 10px;">
-                ⭐
-            </text>
-        {/if}
+        {#each points as point, i}
+            {#if point}
+                {#if highlighedCoordIndex === i}
+                    <text
+                        x={point[0] - 16}
+                        y={point[1] + 8}
+                        style="font-size: 20px;"
+                    >
+                        🌟
+                    </text>
+                {:else}
+                    <text
+                        x={point[0] - 8}
+                        y={point[1] + 4}
+                        style="font-size: 10px;"
+                    >
+                        ⭐
+                    </text>
+                {/if}
+            {/if}
+        {/each}
     </svg>
 </div>
 
