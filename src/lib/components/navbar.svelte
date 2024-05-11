@@ -49,7 +49,7 @@
     );
 </script>
 
-<div class="navbar bg-base-100 border-b-slate-100 border-b-2 pl-10 pr-10">
+<div class="navbar bg-base-100 border-b-slate-100 border-b-2 md:pl-10 md:pr-10">
     <div class="navbar-start">
         <a class="btn btn-ghost text-xl" href="{base}/" target="_self">
             <Icon src={Map} size="20"></Icon> Беларускі вандроўнік
@@ -116,7 +116,10 @@
             value={$locale}
             placeholderGenerator={generateLanguageSelectionPlaceholder}
         />
-        <button class="btn btn-circle ml-5" on:click={infoModal.showModal()}>
+        <button
+            class="btn btn-circle ml-5 hidden md:flex"
+            on:click={infoModal.showModal()}
+        >
             <Icon src={InformationCircle} size="26"></Icon>
         </button>
     </div>

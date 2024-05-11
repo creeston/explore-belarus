@@ -97,14 +97,14 @@
             <h1 class="text-5xl font-bold pb-5">
                 {place?.name}
             </h1>
-            <div class="h-24 w-full">
+            <div>
                 <p>
                     {activeSight?.name}
                 </p>
             </div>
 
             {#if place}
-                <div class="h-12">
+                <div>
                     <a class="btn btn-ghost" href={place?.url} target="_blank">
                         <Icon src={Link} size="14" /> globustut
                     </a>
@@ -115,9 +115,6 @@
                     <GeoPinMenu {place}></GeoPinMenu>
                     <PlanButton {place}></PlanButton>
                     <VisitedButton {place}></VisitedButton>
-                    <!-- <button class="btn btn-circle ml-5" on:click={refreshPlace}
-                    ><Icon src={ArrowPath} size="14" /></button
-                > -->
                 </div>
             {/if}
         </div>

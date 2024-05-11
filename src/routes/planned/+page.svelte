@@ -6,6 +6,7 @@
     import "../../app.css";
     import { planned } from "$lib/stores/planned-store";
     import { t } from "../../i18n";
+    import BottomNavbar from "$lib/components/bottom-navbar.svelte";
 
     export let data;
 
@@ -29,7 +30,9 @@
 <Navbar selectedMenu="planned"></Navbar>
 
 {#if placesToDisplay.length === 0}
-    <div class="text-center text-2xl mt-10 empty-title text-slate-600">
+    <div
+        class="text-center md:text-2xl max-sm:text-md mt-10 empty-title text-slate-600"
+    >
         {$t("planned.empty")}
     </div>
 {/if}
@@ -42,6 +45,7 @@
     {/each}
     <InfiniteScroll threshold={100} on:loadMore={() => page++} window={true} />
 </ul>
+<BottomNavbar selectedMenu="planned"></BottomNavbar>
 
 <style>
     ul {

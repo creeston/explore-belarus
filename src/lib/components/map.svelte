@@ -30,41 +30,39 @@
     });
 </script>
 
-<div>
-    <svg {width} {height}>
-        {#each counties as feature, i}
-            <path
-                d={path(feature)}
-                class="state"
-                stroke="rgb(522, 201, 207 / 90%)"
-                fill="rgb(182, 201, 207)"
-                stroke-width="1px"
-            />
-        {/each}
+<svg {width} {height}>
+    {#each counties as feature, i}
+        <path
+            d={path(feature)}
+            class="state"
+            stroke="rgb(522, 201, 207 / 90%)"
+            fill="rgb(182, 201, 207)"
+            stroke-width="1px"
+        />
+    {/each}
 
-        {#each points as point, i}
-            {#if point}
-                {#if highlighedCoordIndex === i}
-                    <text
-                        x={point[0] - 16}
-                        y={point[1] + 8}
-                        style="font-size: 20px;"
-                    >
-                        🌟
-                    </text>
-                {:else}
-                    <text
-                        x={point[0] - 8}
-                        y={point[1] + 4}
-                        style="font-size: 10px;"
-                    >
-                        ⭐
-                    </text>
-                {/if}
+    {#each points as point, i}
+        {#if point}
+            {#if highlighedCoordIndex === i}
+                <text
+                    x={point[0] - 16}
+                    y={point[1] + 8}
+                    style="font-size: 20px;"
+                >
+                    🌟
+                </text>
+            {:else}
+                <text
+                    x={point[0] - 8}
+                    y={point[1] + 4}
+                    style="font-size: 10px;"
+                >
+                    ⭐
+                </text>
             {/if}
-        {/each}
-    </svg>
-</div>
+        {/if}
+    {/each}
+</svg>
 
 <style lang="scss">
     svg text {

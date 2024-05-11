@@ -7,8 +7,12 @@
     import Map from "$lib/components/map.svelte";
     import { visited } from "$lib/stores/visited-store";
     import { t } from "../../i18n";
+    import BottomNavbar from "$lib/components/bottom-navbar.svelte";
 
     export let data;
+
+    let innerWidth = 0;
+    let innerHeight = 0;
 
     const allPlacesData: Place[] = data.props.places
         .sort((a: Place, b: Place) => a.rating - b.rating)
@@ -30,15 +34,34 @@
 
 <Navbar selectedMenu="visited"></Navbar>
 
+<svelte:window bind:innerWidth bind:innerHeight />
+
 {#if placesToDisplay.length === 0}
-    <div class="text-center text-2xl mt-10 empty-title text-slate-600">
+    <div
+        class="text-center md:text-2xl max-sm:text-md mt-10 empty-title text-slate-600"
+    >
         {$t("visited.empty")}
     </div>
 {/if}
 
-<div class="grid grid-flow-col auto-cols-max">
-    {#if placesToDisplay.length > 0}
-        <div style="position: fixed; left: 50px; top: 25%">
+{#if placesToDisplay.length > 0}
+    {#if innerWidth > 0}
+        <div class="hidden max-md:flex justify-center w-full">
+            <Map
+                height={innerWidth - 50}
+                width={innerWidth - 50}
+                highlighedCoordIndex={placesHovered.findIndex(
+                    (hovered) => hovered
+                )}
+                coords={allPlacesData.map((place) => [
+                    parseFloat(place.coords[0]),
+                    parseFloat(place.coords[1]),
+                ])}
+            ></Map>
+        </div>
+    {/if}
+    <div class="flex max-md:justify-center">
+        <div style="left: 50px; top: 25%" class="hidden md:fixed md:block">
             <Map
                 height={500}
                 width={500}
@@ -51,25 +74,27 @@
                 ])}
             ></Map>
         </div>
-    {/if}
 
-    <div style="width: 450px"></div>
-    <div>
-        <ul class="flex flex-wrap justify-center">
-            {#each placesToDisplay as place, i}
-                <li>
-                    <PlaceCard bind:hovered={placesHovered[i]} {place}
-                    ></PlaceCard>
-                </li>
-            {/each}
-            <InfiniteScroll
-                threshold={100}
-                on:loadMore={() => page++}
-                window={true}
-            />
-        </ul>
+        <div style="width:500px" class="hidden md:block"></div>
+        <div>
+            <ul class="flex flex-wrap justify-center">
+                {#each placesToDisplay as place, i}
+                    <li>
+                        <PlaceCard bind:hovered={placesHovered[i]} {place}
+                        ></PlaceCard>
+                    </li>
+                {/each}
+                <InfiniteScroll
+                    threshold={100}
+                    on:loadMore={() => page++}
+                    window={true}
+                />
+            </ul>
+        </div>
     </div>
-</div>
+{/if}
+
+<BottomNavbar selectedMenu="visited"></BottomNavbar>
 
 <style>
     ul {

@@ -49,11 +49,9 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="dropdown">
-    <div
-        tabindex="0"
-        role="button"
-        class="btn"
+<div class="dropdown max-sm:w-full">
+    <button
+        class="btn max-sm:w-full"
         on:blur={() => {
             isOpened = false;
         }}
@@ -61,7 +59,7 @@
         bind:this={button}
     >
         {placeholder}
-    </div>
+    </button>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <ul
         tabindex="0"
