@@ -12,6 +12,7 @@
     import type { FilterSpecification } from "$lib/models/filter-specification";
     import FilterBar from "$lib/components/filter-bar.svelte";
     import { userInfo } from "$lib/stores/user-store";
+    import BottomNavbar from "$lib/components/bottom-navbar.svelte";
 
     export let data;
 
@@ -83,7 +84,7 @@
     const filterData = (filter: FilterSpecification) => {
         page = 0;
         places = getFilteredPlaces(filter);
-        placesToDisplay = places.slice(0, size - 1);
+        placesToDisplay = [];
     };
 
     const searchByText = (search: string, filter: FilterSpecification) => {
@@ -117,7 +118,6 @@
         ) {
             storageWarnModal.showModal();
             $userInfo.hasPerformedAction = true;
-            // userInfo.update((user) => ({ ...user, hasPerformedAction: true }));
         }
     });
 
@@ -125,13 +125,13 @@
         ...placesToDisplay,
         ...places.splice(size * page, size * (page + 1) - 1),
     ];
-
-    // $: placesToDisplay = places.slice(0, size * (page + 1) - 1);
 </script>
 
 <Navbar selectedMenu="sights"></Navbar>
 
-<SightHero places={allPlacesData} />
+<div class="hidden md:block">
+    <SightHero places={allPlacesData} />
+</div>
 
 <FilterBar onFilterChange={filterData} onSearchChange={searchByText}
 ></FilterBar>
@@ -144,6 +144,7 @@
     {/each}
     <InfiniteScroll threshold={100} on:loadMore={() => page++} window={true} />
 </ul>
+<BottomNavbar selectedMenu="sights"></BottomNavbar>
 
 <dialog id="storageWarnModal" class="modal" bind:this={storageWarnModal}>
     <div class="modal-box">

@@ -4,7 +4,6 @@
     import GeoPinMenu from "./geo-pin-menu.svelte";
     import PlanButton from "./plan-button.svelte";
     import VisitedButton from "./visited-button.svelte";
-    import { createEventDispatcher } from "svelte";
 
     export let place: Place;
     export let hovered: boolean = false;
@@ -33,7 +32,14 @@
         <div class="image-container">
             <div class="overlay"></div>
             <img src={image} alt={place.name} />
-            <div class="card-action" class:card-action-visible={hovered}>
+            <div
+                class="card-action sm:hidden md:block"
+                class:card-action-visible={hovered}
+            >
+                <PlanButton {place} style={"ghost"}></PlanButton>
+                <VisitedButton {place} style={"ghost"}></VisitedButton>
+            </div>
+            <div class="card-action-small md:hidden">
                 <PlanButton {place} style={"ghost"}></PlanButton>
                 <VisitedButton {place} style={"ghost"}></VisitedButton>
             </div>
@@ -67,6 +73,15 @@
         right: 10px;
         display: none;
         opacity: 0;
+        .btn-ghost {
+            background-color: #00000012;
+        }
+    }
+
+    .card-action-small {
+        position: absolute;
+        top: 10px;
+        right: 10px;
         .btn-ghost {
             background-color: #00000012;
         }

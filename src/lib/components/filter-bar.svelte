@@ -52,7 +52,9 @@
     $: onSearchChange(searchValue, getFilterSpecification());
 </script>
 
-<div class="mt-5 space-x-4 ml-10 items-center hidden md:flex">
+<div
+    class="max-sm:ml-5 max-sm:mr-5 mt-5 md:ml-10 md:space-x-4 max-sm:space-y-4 items-center sm:block md:flex"
+>
     <label class="input input-bordered flex items-center gap-2">
         <input
             type="text"
@@ -82,28 +84,24 @@
             style="margin-left: 2px"
         />
     </label>
-    <div>
-        {#if showFilters}
+    {#if showFilters}
+        <div>
             <GeoFilterDropdown
                 value={regions}
                 onValueChange={(value) => {
                     regions = value;
                 }}
             ></GeoFilterDropdown>
-        {/if}
-    </div>
-    <div>
-        {#if showFilters}
+        </div>
+        <div>
             <RatingFilterDropdown
                 value={ratings}
                 onValueChange={(value) => {
                     ratings = value;
                 }}
             ></RatingFilterDropdown>
-        {/if}
-    </div>
-    <div class="form-control">
-        {#if showFilters}
+        </div>
+        <div class="form-control">
             <label class="label cursor-pointer">
                 <span class="label-text">{$t("filters.excludeVisited")}</span>
                 <input
@@ -112,10 +110,8 @@
                     bind:checked={excludeVisited}
                 />
             </label>
-        {/if}
-    </div>
-    <div class="form-control">
-        {#if showFilters}
+        </div>
+        <div class="form-control">
             <label class="label cursor-pointer">
                 <span class="label-text">{$t("filters.excludePlanned")}</span>
                 <input
@@ -124,6 +120,6 @@
                     bind:checked={excludePlanned}
                 />
             </label>
-        {/if}
-    </div>
+        </div>
+    {/if}
 </div>
