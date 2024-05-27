@@ -14,9 +14,11 @@
     );
 
     const markAsVisited = () => {
-        visited.update((visited) => [...visited, { placeId: place.id }]);
+        visited.update((visited) => [
+            ...visited,
+            { placeId: place.id, date: new Date().toISOString() },
+        ]);
         if (!$userInfo.hasPerformedAction) {
-            // userInfo.update((user) => ({ ...user, hasPerformedAction: true }));
             userPerformedFirstAction.set(true);
         }
     };

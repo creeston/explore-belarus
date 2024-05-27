@@ -1,24 +1,36 @@
 <script lang="ts">
-    import Navbar from "$lib/components/navbar.svelte";
     import PlaceCard from "$lib/components/place-card.svelte";
     import InfiniteScroll from "svelte-infinite-scroll";
-    import type { Place } from "$lib/models/place";
+    import type { Place, PlannedPlace } from "$lib/models/place";
     import "../../app.css";
     import { planned } from "$lib/stores/planned-store";
     import { t } from "../../i18n";
-    import BottomNavbar from "$lib/components/bottom-navbar.svelte";
 
     export let data;
 
-    const allPlacesData: Place[] = data.props.places
-        .sort((a: Place, b: Place) => a.rating - b.rating)
-        .filter((place: Place) => {
-            return $planned.some((planned) => planned.placeId === place.id);
+    const allPlacesData: PlannedPlace[] = data.props.places
+        .map((place: Place) => {
+            const plannedInfo = $planned.find(
+                (planned) => planned.placeId === place.id
+            );
+
+            if (plannedInfo) {
+                return {
+                    place: place,
+                    date: new Date(plannedInfo.date),
+                } as PlannedPlace;
+            } else {
+                return null;
+            }
+        })
+        .filter((place: PlannedPlace) => place)
+        .sort((a: PlannedPlace, b: PlannedPlace) => {
+            return b.date.getTime() - a.date.getTime();
         });
 
     let page = 0;
     let size = 20;
-    let placesToDisplay: Place[] = [];
+    let placesToDisplay: PlannedPlace[] = [];
     let places = [...allPlacesData];
 
     $: placesToDisplay = [
@@ -26,8 +38,6 @@
         ...places.splice(size * page, size * (page + 1) - 1),
     ];
 </script>
-
-<Navbar selectedMenu="planned"></Navbar>
 
 {#if placesToDisplay.length === 0}
     <div
@@ -38,14 +48,13 @@
 {/if}
 
 <ul class="flex flex-wrap justify-center">
-    {#each placesToDisplay as place, i}
+    {#each placesToDisplay as place}
         <li>
-            <PlaceCard {place}></PlaceCard>
+            <PlaceCard place={place.place}></PlaceCard>
         </li>
     {/each}
     <InfiniteScroll threshold={100} on:loadMore={() => page++} window={true} />
 </ul>
-<BottomNavbar selectedMenu="planned"></BottomNavbar>
 
 <style>
     ul {

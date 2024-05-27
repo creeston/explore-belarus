@@ -22,7 +22,7 @@
     let excludeVisited = $userInfo.filterSpecification?.excludeVisited ?? false;
     let excludePlanned = $userInfo.filterSpecification?.excludePlanned ?? false;
     let regions: string[] = $userInfo.filterSpecification?.regions ?? [];
-    let ratings: number[] = $userInfo.filterSpecification?.ratings ?? [];
+    // let ratings: number[] = $userInfo.filterSpecification?.ratings ?? [];
     let searchValue = "";
 
     const filterToggled = () => {
@@ -32,7 +32,7 @@
     const getFilterSpecification = (): FilterSpecification => {
         return {
             regions,
-            ratings,
+            // ratings,
             excludeVisited,
             excludePlanned,
         };
@@ -41,7 +41,7 @@
     $: {
         const filterSpecification = {
             regions,
-            ratings,
+            // ratings,
             excludeVisited,
             excludePlanned,
         };
@@ -93,14 +93,14 @@
                 }}
             ></GeoFilterDropdown>
         </div>
-        <div>
+        <!-- <div>
             <RatingFilterDropdown
                 value={ratings}
                 onValueChange={(value) => {
                     ratings = value;
                 }}
             ></RatingFilterDropdown>
-        </div>
+        </div> -->
         <div class="form-control">
             <label class="label cursor-pointer">
                 <span class="label-text">{$t("filters.excludeVisited")}</span>

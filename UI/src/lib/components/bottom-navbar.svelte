@@ -1,13 +1,24 @@
 <script lang="ts">
     import { Bookmark, Check, Icon, Sparkles } from "svelte-hero-icons";
-    import { t } from "../../i18n";
 
-    export let selectedMenu: string = "sights";
+    const getSelectedMenu = (page: any) => {
+        const lastPart = page.url.pathname.split("/").pop();
+        if (lastPart === "planned") {
+            return "planned";
+        } else if (lastPart === "visited") {
+            return "visited";
+        } else {
+            return "sights";
+        }
+    };
+
+    $: selectedMenu = getSelectedMenu($page);
 
     import { planned } from "$lib/stores/planned-store";
     import { visited } from "$lib/stores/visited-store";
 
     import { base } from "$app/paths";
+    import { page } from "$app/stores";
 </script>
 
 <div class="btm-nav lg:hidden">
@@ -17,7 +28,6 @@
         class="max-sm:text-xs"
     >
         <Icon src={Sparkles} size="20" />
-        <!-- <span class="btm-nav-label">{$t("navbar.sights")}</span> -->
     </a>
     <a
         href="{base}/planned"
@@ -37,7 +47,6 @@
             {/if}
             <Icon src={Bookmark} size="20" />
         </span>
-        <!-- <span>{$t("navbar.planned")} </span> -->
     </a>
     <a
         href="{base}/visited"
@@ -57,6 +66,5 @@
             {/if}
             <Icon src={Check} size="20" />
         </span>
-        <!-- <span class="btm-nav-label">{$t("navbar.visited")}</span> -->
     </a>
 </div>

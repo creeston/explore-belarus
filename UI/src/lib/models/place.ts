@@ -1,27 +1,47 @@
 export interface Place {
-    name: string;
-    url: string;
-    rating: number;
-    photo_count: string;
-    coords: [string, string];
-    location: string;
-    sights: PlaceSight[];
     id: number;
+    name: string;
+    location: string[];
+    ratings: Rating[];
+    coordinates: [number, number];
+    urls: Url[];
+    sights?: PlaceSight[];
+    images: Image[];
+}
+
+export interface VisitedPlace {
+    place: Place;
+    date: Date;
+}
+
+export interface PlannedPlace {
+    place: Place;
+    date: Date;
+}
+
+export type Source = 'globus' | 'gotobelarus' | 'vedaj' | 'bestbelarus' | 'tropinki'
+
+export interface Url {
+    href: string;
+    text: string;
+    source: Source;
+}
+
+export interface Image {
+    url: string;
+    source: Source;
+}
+
+export interface Rating {
+    rating: number;
+    source: Source;
 }
 
 export interface PlaceSight {
     name: string;
-    image: string;
-    props: any;
-    id: number;
-    coord: string[];
-    hint: string;
-    date: string;
-    rate: number;
-    state_rate: string;
-    status: string;
-    address: string;
-    style: string;
+    images: Image[];
+    coordinates: [number, number];
+    ratings: Rating[];
     tags: string[];
 }
 

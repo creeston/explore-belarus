@@ -5,13 +5,15 @@ export default {
         "navbar.sights": "Достопримечательности",
         "placecard.markAsVisitedTooltip": "Отметить как посещенное",
         "placecard.markAsPlannedTooltip": "Запланировать",
+        "placecard.onTheMap": "На карте",
+        "placecard.more": "Подробнее",
         "user.storageWarnDescription": "Информация о посещенных или запланированных местах будет храниться в вашем браузере. При очистке кэша или переустановке браузера информация будет утеряна.",
         "user.storageWarnTitle": "Информация о посещенных местах",
 
         "actions.ok": "Ок",
         "actions.close": "Закрыть",
 
-        "filters.search": "Поиск по названию",
+        "filters.search": "Поиск",
         "filters.chooseRegion": "Выберите область",
         "filters.region.minsk": "Минская",
         "filters.region.brest": "Брестская",
@@ -34,7 +36,7 @@ export default {
 
         "about.title": "О проекте",
         "about.description": "Беларускі вандроўнік - это сайт-агрегатор достопримечательностей Беларуси. Здесь вы можете найти информацию о местах, которые стоит посетить, а также отметить те, которые вы уже посетили или планируете посетить в будущем. Исходный код проекта доступен на GitHub и открыт для улучшений и доработок.",
-        
+        "about.dataSources": "Источники данных:",
     },
     by: {
         "navbar.planned": "Запланаваныя",
@@ -42,13 +44,15 @@ export default {
         "navbar.sights": "Славутасці",
         "placecard.markAsVisitedTooltip": "Пазначыць як наведанае",
         "placecard.markAsPlannedTooltip": "Запланаваць",
+        "placecard.onTheMap": "На мапе",
+        "placecard.more": "Падрабязней",
         "user.storageWarnDescription": "Інфармацыя аб наведаных ці запланаваных месцах будзе захоўвацца ў вашым браўзеры. Пры ачысцці кэша ці пераустаноўцы браўзера інфармацыя будзе страчана.",
         "user.storageWarnTitle": "Інфармацыя аб наведаных месцах",
 
         "actions.ok": "Добра",
         "actions.close": "Зачыніць",
 
-        "filters.search": "Пошук па назве",
+        "filters.search": "Пошук",
         "filters.chooseRegion": "Выберыце вобласць",
         "filters.region.minsk": "Мінская",
         "filters.region.brest": "Брэсцкая",
@@ -71,6 +75,7 @@ export default {
 
         "about.title": "Аб праекце",
         "about.description": "Беларускі вандроўнік - гэта сайт-агрэгатар славутасцей Беларусі. Тут вы можаце знайсці інфармацыю аб месцах, якія варта наведаць, а таксама пазначыць тыя, якія вы ўжо наведалі ці плануеце наведаць у будучыні. Зыходны код праекта даступны на GitHub і адкрыты для паляпшэнняў і дапрацовак.",
+        "about.dataSources": "Крыніцы дадзеных:",
     },
   };
   

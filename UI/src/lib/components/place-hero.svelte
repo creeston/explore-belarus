@@ -1,41 +1,48 @@
 <script lang="ts">
-    import type { Place, PlaceSight } from "$lib/models/place";
-    import { Icon, Link } from "svelte-hero-icons";
+    import type { Image, Place, PlaceSight } from "$lib/models/place";
     import Carousel from "svelte-carousel";
     import Map from "./map.svelte";
     import GeoPinMenu from "./geo-pin-menu.svelte";
     import VisitedButton from "./visited-button.svelte";
     import PlanButton from "./plan-button.svelte";
+    import ImageWatermark from "./image-watermark.svelte";
+    import PlaceLinksModal from "./place-links-modal.svelte";
 
     export let places: Place[];
-    const placeCandidates = places
-        .filter(
-            (place) =>
-                place.sights.length > 0 &&
-                place.sights.filter((sight) => sight.rate < 4 && sight.image)
-                    .length > 0
-        )
-        .slice(0, 200);
+    const placeCandidates = places.filter(
+        (place) =>
+            place.sights && place.sights.length > 0 && place.urls.length > 1
+    );
 
     let place: Place | null = null;
-    let sights: PlaceSight[] | null = null;
-    let page = 0;
+    let images: Image[] | null = null;
     let carousel: any;
 
-    $: activeSight = sights ? sights[page] : null;
     $: refreshPlace();
 
     const refreshPlace = () => {
         place = getRandomPlace();
-        page = 0;
         carousel?.goTo(0, { animated: false });
-        sights = place.sights
-            .filter(
-                (sight: any) =>
-                    sight && sight.name && sight.image && sight.rate < 4
-            )
-            .sort((a, b) => a.rate - b.rate)
-            .slice(0, 10);
+        const imagesToDisplay = [];
+        imagesToDisplay.push(
+            ...place.images.filter((image) => image.source == "gotobelarus")
+        );
+        imagesToDisplay.push(
+            ...place.images.filter((image) => image.source == "bestbelarus")
+        );
+        if (place.sights) {
+            place.sights.forEach((sight) => {
+                if (sight && sight.images && sight.images.length > 0) {
+                    imagesToDisplay.push(sight.images[0]);
+                }
+            });
+        }
+
+        imagesToDisplay.push(
+            ...place.images.filter((image) => image.source == "tropinki")
+        );
+
+        images = imagesToDisplay.slice(0, 10);
     };
 
     const getRandomPlace = () => {
@@ -44,52 +51,33 @@
         ];
     };
 
-    const onPageChanged = (event: any) => {
-        page = event.detail;
+    const displayLocation = (place: Place | null) => {
+        if (place && place.location && place.location.length > 0) {
+            return place.location.join(", ");
+        }
+        return "";
     };
 </script>
 
-<div class="hero bg-white-200 mt-5 border-b-slate-100 border-b-2">
+<div class="hero bg-white-200 mt-5 border-b-slate-100 border-b-2 place-hero">
     <div class="hero-content flex-col lg:flex-row-reverse">
         <div class="hero-image">
-            {#if sights && sights.length === 1}
-                <img
-                    src={sights[0].image}
-                    class="rounded-lg shadow-2xl object-cover h-64 w-96 one-sight-image"
-                    alt="hero"
-                />
+            {#if images && images.length >= 1}
+                <Carousel autoplay={images.length > 1} bind:this={carousel}>
+                    {#each images as image}
+                        <div class="image-container rounded-lg sight-image">
+                            <img src={image.url} alt="hero" />
+                            <div class="overlay"></div>
+                            <ImageWatermark source={image.source} />
+                        </div>
+                    {/each}
+                </Carousel>
             {/if}
-            {#key sights}
-                {#if sights && sights.length > 1}
-                    <Carousel
-                        autoplay={true}
-                        on:pageChange={onPageChanged}
-                        bind:this={carousel}
-                    >
-                        {#each sights as sight}
-                            <img
-                                src={sight.image}
-                                class="rounded-lg object-cover h-64 w-96 sight-image"
-                                alt="hero"
-                            />
-                        {/each}
-                    </Carousel>
-                {/if}
-            {/key}
         </div>
 
         <div class="hidden lg:block">
             {#if place}
-                <Map
-                    height={250}
-                    width={250}
-                    coords={[
-                        [
-                            parseFloat(place.coords[0]),
-                            parseFloat(place.coords[1]),
-                        ],
-                    ]}
-                />
+                <Map height={250} width={250} coords={[place.coordinates]} />
             {/if}
         </div>
 
@@ -97,21 +85,15 @@
             <h1 class="text-5xl font-bold pb-5">
                 {place?.name}
             </h1>
-            <div>
+            <div class="mb-5">
                 <p>
-                    {activeSight?.name}
+                    {displayLocation(place)}
                 </p>
             </div>
 
             {#if place}
                 <div>
-                    <a class="btn btn-ghost" href={place?.url} target="_blank">
-                        <Icon src={Link} size="14" /> globustut
-                    </a>
-                    <!-- Commnting until we integrate with 34travel -->
-                    <!-- <a class="btn btn-ghost" href={place?.url} target="_blank">
-                        <Icon src={Link} size="14" /> 34travel
-                    </a> -->
+                    <PlaceLinksModal {place}></PlaceLinksModal>
                     <GeoPinMenu {place}></GeoPinMenu>
                     <PlanButton {place}></PlanButton>
                     <VisitedButton {place}></VisitedButton>
@@ -122,6 +104,31 @@
 </div>
 
 <style lang="scss">
+    .image-container {
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #ccc;
+        position: relative;
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(243, 217, 145, 0.15);
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
     .hero-description {
         width: calc(100vw - 20px);
         max-width: 400px;

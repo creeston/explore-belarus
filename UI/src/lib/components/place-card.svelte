@@ -1,19 +1,68 @@
 <script lang="ts">
-    import { Icon, Link } from "svelte-hero-icons";
-    import type { Place } from "$lib/models/place";
+    import type { Place, Image } from "$lib/models/place";
     import GeoPinMenu from "./geo-pin-menu.svelte";
     import PlanButton from "./plan-button.svelte";
     import VisitedButton from "./visited-button.svelte";
+    import ImageWatermark from "./image-watermark.svelte";
+    import PlaceLinksModal from "./place-links-modal.svelte";
 
     export let place: Place;
     export let hovered: boolean = false;
-    $: sights = place.sights;
-    $: sightsWithImage = sights.filter((sight: any) => sight.image);
-    $: image = sightsWithImage.length > 0 ? sightsWithImage[0].image : null;
 
-    const preprocessLocation = (location: string) => {
-        const parts = location.split(",");
-        return parts.slice(parts.length - 2).join(",");
+    const getImageForPlace = (place: Place) => {
+        if (place.images && place.images.length > 0) {
+            // First priority is image from gotobelarus
+            if (
+                place.images.some(
+                    (image: Image) => image.source === "gotobelarus"
+                )
+            ) {
+                return place.images.filter(
+                    (image: Image) => image.source === "gotobelarus"
+                )[0];
+            }
+
+            // Second priority is image from bestbelarus
+            if (
+                place.images.some(
+                    (image: Image) => image.source === "bestbelarus"
+                )
+            ) {
+                return place.images.filter(
+                    (image: Image) => image.source === "bestbelarus"
+                )[0];
+            }
+        }
+
+        // Third priority is image from sights (most probably from globus source)
+        if (place.sights && place.sights.length > 0) {
+            const sight = place.sights.find(
+                (sight) => sight.images && sight.images.length > 0
+            );
+            if (sight) {
+                return sight.images[0];
+            }
+        }
+
+        // Fourth priority is image from tropinki
+        if (place.images.some((image: Image) => image.source === "tropinki")) {
+            return place.images.filter(
+                (image: Image) => image.source === "tropinki"
+            )[0];
+        }
+
+        // Fifth priority is any image
+        if (place.images && place.images.length > 0) {
+            return place.images[0];
+        }
+
+        return null;
+    };
+
+    $: image = getImageForPlace(place);
+
+    const preprocessLocation = (location: string[]) => {
+        return location.join(", ");
     };
 
     $: location = preprocessLocation(place.location);
@@ -31,7 +80,9 @@
     <div class="place-card-body">
         <div class="image-container">
             <div class="overlay"></div>
-            <img src={image} alt={place.name} />
+            {#if image}
+                <img src={image.url} alt={place.name} />
+            {/if}
             <div
                 class="card-action sm:hidden md:block"
                 class:card-action-visible={hovered}
@@ -43,6 +94,9 @@
                 <PlanButton {place} style={"ghost"}></PlanButton>
                 <VisitedButton {place} style={"ghost"}></VisitedButton>
             </div>
+            {#if image}
+                <ImageWatermark source={image.source}></ImageWatermark>
+            {/if}
         </div>
     </div>
     <div class="place-card-title">
@@ -51,18 +105,7 @@
     </div>
     <div class="place-card-footer">
         <GeoPinMenu {place}></GeoPinMenu>
-
-        <a class="btn btn-ghost btn-sm" href={place.url} target="_blank"
-            ><Icon src={Link} size="10" /> globustut</a
-        >
-        <!-- Commnting until we integrate with 34travel -->
-        <!-- <a
-            class="btn btn-ghost btn-sm"
-            href={place && place.coords
-                ? `https://orda.of.by/.map/?${place.coords[0]},${place.coords[1]}&m=roadmap/13`
-                : "/"}
-            target="_blank"><Icon src={Link} size="10" /> 34travel</a
-        > -->
+        <PlaceLinksModal {place}></PlaceLinksModal>
     </div>
 </div>
 
@@ -100,8 +143,6 @@
 
     .place-card {
         width: 300px;
-        // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        // margin-bottom: 50px;
         border: 1px solid #00000023;
         border-top: 0px;
         border-radius: 10px;

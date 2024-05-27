@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Navbar from "$lib/components/navbar.svelte";
     import PlaceCard from "$lib/components/place-card.svelte";
     import SightHero from "$lib/components/place-hero.svelte";
     import InfiniteScroll from "svelte-infinite-scroll";
@@ -12,12 +11,13 @@
     import type { FilterSpecification } from "$lib/models/filter-specification";
     import FilterBar from "$lib/components/filter-bar.svelte";
     import { userInfo } from "$lib/stores/user-store";
-    import BottomNavbar from "$lib/components/bottom-navbar.svelte";
+    import { RatingService } from "$lib/services/rating-service";
 
     export let data;
 
     const allPlacesData: Place[] = data.props.places.sort(
-        (a: Place, b: Place) => a.rating - b.rating
+        (a: Place, b: Place) =>
+            RatingService.getSortRating(b) - RatingService.getSortRating(a)
     );
 
     const getFilteredPlaces = (filter: FilterSpecification) => {
@@ -26,14 +26,8 @@
         if (filter.regions.length > 0) {
             filteredPlaces = filteredPlaces.filter((place) =>
                 filter.regions.some((option: string) =>
-                    place.location.includes(option)
+                    place.location.some((part: string) => part.includes(option))
                 )
-            );
-        }
-
-        if (filter.ratings.length > 0) {
-            filteredPlaces = filteredPlaces.filter((place) =>
-                filter.ratings.some((option: number) => place.rating === option)
             );
         }
 
@@ -56,35 +50,10 @@
         return filteredPlaces;
     };
 
-    // Commented functionality allosws to immediately filter places when user marks them as visited or planned
-    // However, in the current implementation, it is not user friendly
-
-    // $: visited.subscribe(() => {
-    //     if (!$userInfo.filterSpecification) {
-    //         return;
-    //     }
-
-    //     if ($userInfo.filterSpecification?.excludeVisited) {
-    //         places = getFilteredPlaces($userInfo.filterSpecification);
-    //         placesToDisplay = places.slice(0, size - 1);
-    //     }
-    // });
-
-    // $: planned.subscribe(() => {
-    //     if (!$userInfo.filterSpecification) {
-    //         return;
-    //     }
-
-    //     if ($userInfo.filterSpecification.excludePlanned) {
-    //         places = getFilteredPlaces($userInfo.filterSpecification);
-    //         placesToDisplay = places.slice(0, size - 1);
-    //     }
-    // });
-
     const filterData = (filter: FilterSpecification) => {
         page = 0;
         places = getFilteredPlaces(filter);
-        placesToDisplay = [];
+        placesToDisplay = places.splice(size * page, size * (page + 1) - 1);
     };
 
     const searchByText = (search: string, filter: FilterSpecification) => {
@@ -95,9 +64,12 @@
             places = places.filter(
                 (place) =>
                     place.name.toLowerCase().includes(search.toLowerCase()) ||
-                    place.sights.some((sight) =>
-                        sight.name.toLowerCase().includes(search.toLowerCase())
-                    )
+                    (place.sights &&
+                        place.sights.some((sight) =>
+                            sight.name
+                                .toLowerCase()
+                                .includes(search.toLowerCase())
+                        ))
             );
         }
 
@@ -105,7 +77,7 @@
     };
 
     let page = 0;
-    let size = 20;
+    let size = 10;
     let placesToDisplay: Place[] = [];
     let places = [...allPlacesData];
     let storageWarnModal: any;
@@ -127,8 +99,6 @@
     ];
 </script>
 
-<Navbar selectedMenu="sights"></Navbar>
-
 <div class="hidden md:block">
     <SightHero places={allPlacesData} />
 </div>
@@ -144,7 +114,6 @@
     {/each}
     <InfiniteScroll threshold={100} on:loadMore={() => page++} window={true} />
 </ul>
-<BottomNavbar selectedMenu="sights"></BottomNavbar>
 
 <dialog id="storageWarnModal" class="modal" bind:this={storageWarnModal}>
     <div class="modal-box">

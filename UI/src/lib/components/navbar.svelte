@@ -5,7 +5,6 @@
         Check,
         Bookmark,
         GlobeAlt,
-        InformationCircle,
         Map,
     } from "svelte-hero-icons";
     import "../../app.css";
@@ -16,16 +15,28 @@
     import type { SelectOption } from "$lib/models/select-option";
     import { userInfo } from "$lib/stores/user-store";
     import { base } from "$app/paths";
+    import InfoModalButton from "./info-modal-button.svelte";
 
-    export let selectedMenu: string = "sights";
+    import { page } from "$app/stores";
+
+    const getSelectedMenu = (page: any) => {
+        const lastPart = page.url.pathname.split("/").pop();
+        if (lastPart === "planned") {
+            return "planned";
+        } else if (lastPart === "visited") {
+            return "visited";
+        } else {
+            return "sights";
+        }
+    };
+
+    $: selectedMenu = getSelectedMenu($page);
 
     const changeLocale = (locale: string) => {
         $locale = locale;
         userInfo.update((user) => ({ ...user, selectedLocale: locale }));
         window.location.reload();
     };
-
-    let infoModal: any;
 
     $: {
         if (!$userInfo.selectedLocale) {
@@ -116,28 +127,7 @@
             value={$locale}
             placeholderGenerator={generateLanguageSelectionPlaceholder}
         />
-        <button
-            class="btn btn-circle ml-5 hidden md:flex"
-            on:click={infoModal.showModal()}
-        >
-            <Icon src={InformationCircle} size="26"></Icon>
-        </button>
-    </div>
 
-    <dialog id="infoModal" class="modal" bind:this={infoModal}>
-        <div class="modal-box">
-            <h3 class="font-bold text-lg">{$t("about.title")}</h3>
-            <p class="py-4">{$t("about.description")}</p>
-            <a
-                class="link"
-                href="https://github.com/creeston/explore-belarus"
-                target="_blank">https://github.com/creeston/explore-belarus</a
-            >
-            <div class="modal-action">
-                <form method="dialog">
-                    <button class="btn">{$t("actions.close")}</button>
-                </form>
-            </div>
-        </div>
-    </dialog>
+        <InfoModalButton />
+    </div>
 </div>

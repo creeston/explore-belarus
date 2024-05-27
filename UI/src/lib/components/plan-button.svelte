@@ -14,7 +14,10 @@
     );
 
     const markAsPlanned = () => {
-        planned.update((planned) => [...planned, { placeId: place.id }]);
+        planned.update((planned) => [
+            ...planned,
+            { placeId: place.id, date: new Date().toISOString() },
+        ]);
         if (!$userInfo.hasPerformedAction) {
             userPerformedFirstAction.set(true);
         }

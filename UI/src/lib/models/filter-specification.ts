@@ -1,6 +1,6 @@
 export interface FilterSpecification {
     regions: string[];
-    ratings: number[];
+    // ratings: number[];
 
     excludeVisited: boolean;
     excludePlanned: boolean;
