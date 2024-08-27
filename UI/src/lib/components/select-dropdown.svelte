@@ -16,18 +16,17 @@
         selectedOption = option;
         onValueChange(selectedOption);
         button.blur();
-        button.blur();
         optionElements[index].blur();
     };
 
-    let isOpened = false;
-    const handleClick = () => {
-        if (button && isOpened) {
-            button.blur();
-        } else {
-            isOpened = true;
-        }
-    };
+    // let isOpened = false;
+    // const handleClick = () => {
+    //     if (button && isOpened) {
+    //         button.blur();
+    //     } else {
+    //         isOpened = true;
+    //     }
+    // };
 
     $: placeholder = placeholderGenerator(selectedOption);
 </script>
@@ -35,14 +34,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="dropdown dropdown-end">
-    <button
-        class="btn max-sm:btn-sm"
-        on:blur={() => {
-            isOpened = false;
-        }}
-        on:click={handleClick}
-        bind:this={button}
-    >
+    <button class="btn max-sm:btn-sm" bind:this={button}>
         {#if icon}
             <Icon src={icon} size="24" />
         {/if}
