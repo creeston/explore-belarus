@@ -19,20 +19,40 @@
         optionElements[index].blur();
     };
 
+    let isOpened = false;
+    const handleClick = () => {
+        if (button && isOpened) {
+            button.blur();
+        } else {
+            isOpened = true;
+        }
+    };
+
     $: placeholder = placeholderGenerator(selectedOption);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<details class="dropdown dropdown-end">
-    <summary class="btn max-sm:btn-sm"
-        >{#if icon}
+<div class="dropdown dropdown-end">
+    <div
+        class="btn max-sm:btn-sm"
+        bind:this={button}
+        on:blur={() => {
+            isOpened = false;
+        }}
+        on:click={handleClick}
+        tabindex="0"
+        role="button"
+    >
+        {#if icon}
             <Icon src={icon} size="24" />
         {/if}
-        {placeholder}</summary
-    >
+        {placeholder}
+    </div>
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <ul
-        class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+        tabindex="0"
+        class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
     >
         {#each options as option, index}
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -46,4 +66,4 @@
             </li>
         {/each}
     </ul>
-</details>
+</div>
