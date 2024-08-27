@@ -7,29 +7,28 @@
     import PlaceLinksModal from "./place-links-modal.svelte";
 
     export let place: Place;
-    export let hovered: boolean = false;
 
     const getImageForPlace = (place: Place) => {
         if (place.images && place.images.length > 0) {
             // First priority is image from gotobelarus
             if (
                 place.images.some(
-                    (image: Image) => image.source === "gotobelarus"
+                    (image: Image) => image.source === "gotobelarus",
                 )
             ) {
                 return place.images.filter(
-                    (image: Image) => image.source === "gotobelarus"
+                    (image: Image) => image.source === "gotobelarus",
                 )[0];
             }
 
             // Second priority is image from bestbelarus
             if (
                 place.images.some(
-                    (image: Image) => image.source === "bestbelarus"
+                    (image: Image) => image.source === "bestbelarus",
                 )
             ) {
                 return place.images.filter(
-                    (image: Image) => image.source === "bestbelarus"
+                    (image: Image) => image.source === "bestbelarus",
                 )[0];
             }
         }
@@ -37,7 +36,7 @@
         // Third priority is image from sights (most probably from globus source)
         if (place.sights && place.sights.length > 0) {
             const sight = place.sights.find(
-                (sight) => sight.images && sight.images.length > 0
+                (sight) => sight.images && sight.images.length > 0,
             );
             if (sight) {
                 return sight.images[0];
@@ -47,7 +46,7 @@
         // Fourth priority is image from tropinki
         if (place.images.some((image: Image) => image.source === "tropinki")) {
             return place.images.filter(
-                (image: Image) => image.source === "tropinki"
+                (image: Image) => image.source === "tropinki",
             )[0];
         }
 
@@ -72,21 +71,14 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div
-    class="place-card m-5"
-    on:mouseover={() => (hovered = true)}
-    on:mouseout={() => (hovered = false)}
->
+<div class="place-card m-5">
     <div class="place-card-body">
         <div class="image-container">
             <div class="overlay"></div>
             {#if image}
                 <img src={image.url} alt={place.name} />
             {/if}
-            <div
-                class="card-action sm:hidden md:block"
-                class:card-action-visible={hovered}
-            >
+            <div class="card-action sm:hidden md:block">
                 <PlanButton {place} style={"ghost"}></PlanButton>
                 <VisitedButton {place} style={"ghost"}></VisitedButton>
             </div>
@@ -118,15 +110,15 @@
         opacity: 0;
     }
 
+    .place-card-body:hover .card-action {
+        display: block; /* Show when parent is hovered */
+        opacity: 1;
+    }
+
     .card-action-small {
         position: absolute;
         top: 10px;
         right: 10px;
-    }
-
-    .card-action-visible {
-        display: block;
-        opacity: 1;
     }
 
     .place-card {
