@@ -116,29 +116,17 @@
         right: 10px;
         display: none;
         opacity: 0;
-        .btn-ghost {
-            background-color: #00000012;
-        }
     }
 
     .card-action-small {
         position: absolute;
         top: 10px;
         right: 10px;
-        .btn-ghost {
-            background-color: #00000012;
-        }
     }
 
     .card-action-visible {
         display: block;
         opacity: 1;
-
-        div {
-            button {
-                cursor: pointer;
-            }
-        }
     }
 
     .place-card {
@@ -146,17 +134,6 @@
         border: 1px solid #00000023;
         border-top: 0px;
         border-radius: 10px;
-    }
-
-    .place-distance {
-        position: absolute;
-        background: #3b393952;
-        color: white;
-        border-radius: 5px;
-        bottom: 40px;
-        left: 15px;
-        padding-left: 5px;
-        padding-right: 5px;
     }
 
     .place-card-body {

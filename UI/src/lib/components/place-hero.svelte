@@ -11,7 +11,11 @@
     export let places: Place[];
     const placeCandidates = places.filter(
         (place) =>
-            place.sights && place.sights.length > 0 && place.urls.length > 1
+            place.sights &&
+            place.sights.length > 0 &&
+            place.urls.length > 1 &&
+            place.images &&
+            place.images.length > 0
     );
 
     let place: Place | null = null;
@@ -138,57 +142,8 @@
         max-width: 450px;
     }
 
-    .one-sight-image {
-        margin-bottom: 20px;
-    }
-
     .sight-image {
         min-width: 390px;
         max-width: 390px;
-    }
-
-    .custom-arrow.svelte-4bw00n.svelte-4bw00n {
-        width: 20px;
-        background-color: #000000;
-        opacity: 0.3;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        z-index: 1;
-        transition: opacity 150ms ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .custom-arrow:hover {
-        opacity: 0.5;
-    }
-
-    .custom-arrow > i {
-        border: solid #1e1e1e;
-        border-width: 0 5px 5px 0;
-        padding: 5px;
-        position: relative;
-    }
-
-    .custom-arrow-prev {
-        left: 0;
-    }
-
-    .custom-arrow-prev > i {
-        transform: rotate(135deg);
-        right: -4px;
-    }
-
-    .custom-arrow-next {
-        right: 0;
-    }
-
-    .custom-arrow-next > i {
-        transform: rotate(-45deg);
-        left: -4px;
     }
 </style>
