@@ -5,6 +5,7 @@ export default {
         "navbar.sights": "Достопримечательности",
         "placecard.markAsVisitedTooltip": "Отметить как посещенное",
         "placecard.markAsPlannedTooltip": "Запланировать",
+        "placecard.markAsIgnoredTooltip": "Не интересно",
         "placecard.onTheMap": "На карте",
         "placecard.more": "Подробнее",
         "user.storageWarnDescription": "Информация о посещенных или запланированных местах будет храниться в вашем браузере. При очистке кэша или переустановке браузера информация будет утеряна.",
@@ -30,6 +31,7 @@ export default {
         
         "filters.excludeVisited": "Без посещенных",
         "filters.excludePlanned": "Без запланированных",
+        "filters.excludeIgnored": "Без 'не интересных'",
         
         "planned.empty": "Здесь пока нет запланированных мест",
         "visited.empty": "Здесь пока нет посещенных мест",
@@ -44,6 +46,7 @@ export default {
         "navbar.sights": "Славутасці",
         "placecard.markAsVisitedTooltip": "Пазначыць як наведанае",
         "placecard.markAsPlannedTooltip": "Запланаваць",
+        "placecard.markAsIgnoredTooltip": "Не цікава",
         "placecard.onTheMap": "На мапе",
         "placecard.more": "Падрабязней",
         "user.storageWarnDescription": "Інфармацыя аб наведаных ці запланаваных месцах будзе захоўвацца ў вашым браўзеры. Пры ачысцці кэша ці пераустаноўцы браўзера інфармацыя будзе страчана.",
@@ -69,6 +72,7 @@ export default {
 
         "filters.excludeVisited": "Без наведаных",
         "filters.excludePlanned": "Без запланаваных",
+        "filters.excludeIgnored": "Без 'не цікавых'",
 
         "planned.empty": "Тут яшчэ няма запланаваных месцаў",
         "visited.empty": "Тут яшчэ няма наведаных месцаў",

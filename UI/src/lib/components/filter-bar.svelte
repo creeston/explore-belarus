@@ -6,7 +6,6 @@
         XMark,
     } from "svelte-hero-icons";
     import GeoFilterDropdown from "./geo-filter-dropdown.svelte";
-    import RatingFilterDropdown from "./rating-filter-dropdown.svelte";
     import { userInfo } from "$lib/stores/user-store";
     import type { FilterSpecification } from "$lib/models/filter-specification";
     import { t } from "../../i18n";
@@ -14,15 +13,15 @@
     export let onFilterChange: (filter: FilterSpecification) => void;
     export let onSearchChange: (
         search: string,
-        filter: FilterSpecification
+        filter: FilterSpecification,
     ) => void;
 
     let showFilters =
         $userInfo.showFilterBar !== undefined ? $userInfo.showFilterBar : true;
     let excludeVisited = $userInfo.filterSpecification?.excludeVisited ?? false;
     let excludePlanned = $userInfo.filterSpecification?.excludePlanned ?? false;
+    let excludeIgnored = $userInfo.filterSpecification?.excludeIgnored ?? true;
     let regions: string[] = $userInfo.filterSpecification?.regions ?? [];
-    // let ratings: number[] = $userInfo.filterSpecification?.ratings ?? [];
     let searchValue = "";
 
     const filterToggled = () => {
@@ -32,9 +31,9 @@
     const getFilterSpecification = (): FilterSpecification => {
         return {
             regions,
-            // ratings,
             excludeVisited,
             excludePlanned,
+            excludeIgnored,
         };
     };
 
@@ -44,6 +43,7 @@
             // ratings,
             excludeVisited,
             excludePlanned,
+            excludeIgnored,
         };
         $userInfo.filterSpecification = filterSpecification;
         onFilterChange(filterSpecification);
@@ -93,14 +93,6 @@
                 }}
             ></GeoFilterDropdown>
         </div>
-        <!-- <div>
-            <RatingFilterDropdown
-                value={ratings}
-                onValueChange={(value) => {
-                    ratings = value;
-                }}
-            ></RatingFilterDropdown>
-        </div> -->
         <div class="form-control">
             <label class="label cursor-pointer">
                 <span class="label-text">{$t("filters.excludeVisited")}</span>
@@ -118,6 +110,16 @@
                     type="checkbox"
                     class="toggle ml-4"
                     bind:checked={excludePlanned}
+                />
+            </label>
+        </div>
+        <div class="form-control">
+            <label class="label cursor-pointer">
+                <span class="label-text">{$t("filters.excludeIgnored")}</span>
+                <input
+                    type="checkbox"
+                    class="toggle ml-4"
+                    bind:checked={excludeIgnored}
                 />
             </label>
         </div>
