@@ -39,5 +39,5 @@
     icon={XMark}
     active={markedAsIgnored}
     setActive={markAsIgnored}
-    setInctive={unmarkAsIgnored}
+    setInactive={unmarkAsIgnored}
 ></ActionIconButton>

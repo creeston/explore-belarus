@@ -39,5 +39,5 @@
     icon={Bookmark}
     active={markedAsPlanned}
     setActive={markAsPlanned}
-    setInctive={unmarkAsPlanned}
+    setInactive={unmarkAsPlanned}
 ></ActionIconButton>
