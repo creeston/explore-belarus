@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { Check } from "svelte-hero-icons";
+    import { Icon, XMark } from "svelte-hero-icons";
     import { t } from "../../i18n";
     import type { Place } from "$lib/models/place";
-    import { visited } from "$lib/stores/visited-store";
+    import { ignored } from "$lib/stores/ignored-store";
     import { userInfo } from "$lib/stores/user-store";
     import { userPerformedFirstAction } from "$lib/stores/event-store";
     import ActionIconButton from "./action-icon-button.svelte";
@@ -11,13 +11,13 @@
     export let style: "ghost" | "normal" = "normal";
     export let showTooltip = true;
 
-    $: markedAsVisited = $visited.some(
-        (visitedPlace) => visitedPlace.placeId === place.id,
+    $: markedAsIgnored = $ignored.some(
+        (ignoredPlace) => ignoredPlace.placeId === place.id,
     );
 
-    const markAsVisited = () => {
-        visited.update((visited) => [
-            ...visited,
+    const markAsIgnored = () => {
+        ignored.update((ignored) => [
+            ...ignored,
             { placeId: place.id, date: new Date().toISOString() },
         ]);
         if (!$userInfo.hasPerformedAction) {
@@ -25,9 +25,9 @@
         }
     };
 
-    const unmarkAsVisited = () => {
-        visited.update((visited) =>
-            visited.filter((visitedPlace) => visitedPlace.placeId !== place.id),
+    const unmarkAsIgnored = () => {
+        ignored.update((ignored) =>
+            ignored.filter((ignoredPlace) => ignoredPlace.placeId !== place.id),
         );
     };
 </script>
@@ -35,9 +35,9 @@
 <ActionIconButton
     {style}
     showTooltipOnHover={showTooltip}
-    tooltipText={$t("placecard.markAsPlannedTooltip")}
-    icon={Check}
-    active={markedAsVisited}
-    setActive={markAsVisited}
-    setInctive={unmarkAsVisited}
+    tooltipText={$t("placecard.markAsIgnoredTooltip")}
+    icon={XMark}
+    active={markedAsIgnored}
+    setActive={markAsIgnored}
+    setInctive={unmarkAsIgnored}
 ></ActionIconButton>

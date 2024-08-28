@@ -7,6 +7,7 @@
         GlobeAlt,
         Map,
     } from "svelte-hero-icons";
+    import { scale } from "svelte/transition";
     import "../../app.css";
     import { planned } from "$lib/stores/planned-store";
     import { visited } from "$lib/stores/visited-store";
@@ -18,6 +19,7 @@
     import InfoModalButton from "./info-modal-button.svelte";
 
     import { page } from "$app/stores";
+    import { quintOut } from "svelte/easing";
 
     const getSelectedMenu = (page: any) => {
         const lastPart = page.url.pathname.split("/").pop();
@@ -28,6 +30,14 @@
         } else {
             return "sights";
         }
+    };
+
+    const scaleOptions = {
+        duration: 1000,
+        delay: 100,
+        opacity: 0,
+        start: 2.5,
+        easing: quintOut,
     };
 
     $: selectedMenu = getSelectedMenu($page);
@@ -56,7 +66,7 @@
         (key: any) => ({
             viewValue: locales[key as Locale].name,
             value: key,
-        })
+        }),
     );
 </script>
 
@@ -80,9 +90,13 @@
                     class:active={selectedMenu === "planned"}
                 >
                     {#if $planned.length > 0 && $planned.length < 100}
-                        <span class="indicator-item badge badge-ghost badge-sm"
-                            >{$planned.length}</span
-                        >
+                        {#key $planned.length}
+                            <span
+                                class="indicator-item badge badge-ghost badge-sm"
+                                transition:scale={scaleOptions}
+                                >{$planned.length}</span
+                            >
+                        {/key}
                     {/if}
                     {#if $planned.length >= 100}
                         <span class="indicator-item badge badge-ghost badge-sm"
@@ -101,9 +115,13 @@
                     class:active={selectedMenu === "visited"}
                 >
                     {#if $visited.length > 0 && $visited.length < 100}
-                        <span class="indicator-item badge badge-ghost badge-sm"
-                            >{$visited.length}</span
-                        >
+                        {#key $visited.length}
+                            <span
+                                class="indicator-item badge badge-ghost badge-sm"
+                                transition:scale={scaleOptions}
+                                >{$visited.length}</span
+                            >
+                        {/key}
                     {/if}
                     {#if $visited.length >= 100}
                         <span class="indicator-item badge badge-ghost badge-sm"

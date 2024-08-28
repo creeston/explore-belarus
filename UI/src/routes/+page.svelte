@@ -12,29 +12,36 @@
     import FilterBar from "$lib/components/filter-bar.svelte";
     import { userInfo } from "$lib/stores/user-store";
     import { RatingService } from "$lib/services/rating-service";
+    import { ignored } from "$lib/stores/ignored-store";
+    import { fade } from "svelte/transition";
 
     export let data;
 
     const allPlacesData: Place[] = data.props.places.sort(
         (a: Place, b: Place) =>
-            RatingService.getSortRating(b) - RatingService.getSortRating(a)
+            RatingService.getSortRating(b) - RatingService.getSortRating(a),
     );
 
-    const getFilteredPlaces = (filter: FilterSpecification) => {
-        let filteredPlaces = [...allPlacesData];
+    const getFilteredPlaces = (
+        filter: FilterSpecification,
+        dataToFilter: Place[] | null = null,
+    ) => {
+        let filteredPlaces = dataToFilter ?? [...allPlacesData];
 
         if (filter.regions.length > 0) {
             filteredPlaces = filteredPlaces.filter((place) =>
                 filter.regions.some((option: string) =>
-                    place.location.some((part: string) => part.includes(option))
-                )
+                    place.location.some((part: string) =>
+                        part.includes(option),
+                    ),
+                ),
             );
         }
 
         if (filter.excludeVisited) {
             filteredPlaces = filteredPlaces.filter((place) => {
                 return !$visited.some(
-                    (visitedPlace) => visitedPlace.placeId === place.id
+                    (visitedPlace) => visitedPlace.placeId === place.id,
                 );
             });
         }
@@ -42,7 +49,15 @@
         if (filter.excludePlanned) {
             filteredPlaces = filteredPlaces.filter((place) => {
                 return !$planned.some(
-                    (plannedPlace) => plannedPlace.placeId === place.id
+                    (plannedPlace) => plannedPlace.placeId === place.id,
+                );
+            });
+        }
+
+        if (filter.excludeIgnored) {
+            filteredPlaces = filteredPlaces.filter((place) => {
+                return !$ignored.some(
+                    (ignoredPlace) => ignoredPlace.placeId === place.id,
                 );
             });
         }
@@ -50,10 +65,13 @@
         return filteredPlaces;
     };
 
+    let filterSpecification: FilterSpecification | null = null;
+
     const filterData = (filter: FilterSpecification) => {
         page = 0;
         places = getFilteredPlaces(filter);
         placesToDisplay = places.splice(size * page, size * (page + 1) - 1);
+        filterSpecification = filter;
     };
 
     const searchByText = (search: string, filter: FilterSpecification) => {
@@ -68,8 +86,8 @@
                         place.sights.some((sight) =>
                             sight.name
                                 .toLowerCase()
-                                .includes(search.toLowerCase())
-                        ))
+                                .includes(search.toLowerCase()),
+                        )),
             );
         }
 
@@ -97,6 +115,24 @@
         ...placesToDisplay,
         ...places.splice(size * page, size * (page + 1) - 1),
     ];
+
+    visited.subscribe(() => {
+        if (filterSpecification && filterSpecification.excludeVisited) {
+            filterData(filterSpecification);
+        }
+    });
+
+    planned.subscribe(() => {
+        if (filterSpecification && filterSpecification.excludePlanned) {
+            filterData(filterSpecification);
+        }
+    });
+
+    ignored.subscribe(() => {
+        if (filterSpecification && filterSpecification.excludeIgnored) {
+            filterData(filterSpecification);
+        }
+    });
 </script>
 
 <div class="hidden md:block">
@@ -107,8 +143,8 @@
 ></FilterBar>
 
 <ul class="flex flex-wrap justify-center">
-    {#each placesToDisplay as place, i}
-        <li>
+    {#each placesToDisplay as place, i (place.id)}
+        <li transition:fade>
             <PlaceCard {place}></PlaceCard>
         </li>
     {/each}

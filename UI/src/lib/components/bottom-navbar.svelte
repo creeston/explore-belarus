@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Bookmark, Check, Icon, Sparkles } from "svelte-hero-icons";
+    import { scale } from "svelte/transition";
 
     const getSelectedMenu = (page: any) => {
         const lastPart = page.url.pathname.split("/").pop();
@@ -14,11 +15,20 @@
 
     $: selectedMenu = getSelectedMenu($page);
 
+    const scaleOptions = {
+        duration: 1000,
+        delay: 100,
+        opacity: 0,
+        start: 2.5,
+        easing: quintOut,
+    };
+
     import { planned } from "$lib/stores/planned-store";
     import { visited } from "$lib/stores/visited-store";
 
     import { base } from "$app/paths";
     import { page } from "$app/stores";
+    import { quintOut } from "svelte/easing";
 </script>
 
 <div class="btm-nav lg:hidden">
@@ -36,13 +46,17 @@
     >
         <span class="indicator">
             {#if $planned.length > 0 && $planned.length < 100}
-                <span class="indicator-item badge badge-ghost badge-xs"
-                    >{$planned.length}</span
-                >
+                {#key $planned.length}
+                    <span
+                        class="indicator-item badge badge-ghost badge-xs"
+                        transition:scale={scaleOptions}>{$planned.length}</span
+                    >
+                {/key}
             {/if}
             {#if $planned.length >= 100}
-                <span class="indicator-item badge badge-ghost badge-xs"
-                    >99+</span
+                <span
+                    class="indicator-item badge badge-ghost badge-xs"
+                    transition:scale={scaleOptions}>99+</span
                 >
             {/if}
             <Icon src={Bookmark} size="20" />
@@ -55,13 +69,17 @@
     >
         <span class="indicator">
             {#if $visited.length > 0 && $visited.length < 100}
-                <span class="indicator-item badge badge-ghost badge-sm"
-                    >{$visited.length}</span
-                >
+                {#key $visited.length}
+                    <span
+                        class="indicator-item badge badge-ghost badge-sm"
+                        transition:scale={scaleOptions}>{$visited.length}</span
+                    >
+                {/key}
             {/if}
             {#if $visited.length >= 100}
-                <span class="indicator-item badge badge-ghost badge-xs"
-                    >99+</span
+                <span
+                    class="indicator-item badge badge-ghost badge-xs"
+                    transition:scale={scaleOptions}>99+</span
                 >
             {/if}
             <Icon src={Check} size="20" />

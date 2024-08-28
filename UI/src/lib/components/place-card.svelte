@@ -5,6 +5,7 @@
     import VisitedButton from "./visited-button.svelte";
     import ImageWatermark from "./image-watermark.svelte";
     import PlaceLinksModal from "./place-links-modal.svelte";
+    import IgnoreButton from "./ignore-button.svelte";
 
     export let place: Place;
 
@@ -72,19 +73,35 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div class="place-card m-5">
-    <div class="place-card-body">
+    <div class="place-card-body-lg hidden sm:flex">
         <div class="image-container">
             <div class="overlay"></div>
             {#if image}
                 <img src={image.url} alt={place.name} />
             {/if}
-            <div class="card-action sm:hidden md:block">
+            <div class="card-action">
+                <IgnoreButton {place} style={"ghost"}></IgnoreButton>
                 <PlanButton {place} style={"ghost"}></PlanButton>
                 <VisitedButton {place} style={"ghost"}></VisitedButton>
             </div>
-            <div class="card-action-small md:hidden">
-                <PlanButton {place} style={"ghost"}></PlanButton>
-                <VisitedButton {place} style={"ghost"}></VisitedButton>
+            {#if image}
+                <ImageWatermark source={image.source}></ImageWatermark>
+            {/if}
+        </div>
+    </div>
+    <div class="place-card-body flex sm:hidden">
+        <div class="image-container">
+            <div class="overlay"></div>
+            {#if image}
+                <img src={image.url} alt={place.name} />
+            {/if}
+            <div class="card-action-small">
+                <IgnoreButton {place} style={"ghost"} showTooltip={false}
+                ></IgnoreButton>
+                <PlanButton {place} style={"ghost"} showTooltip={false}
+                ></PlanButton>
+                <VisitedButton {place} style={"ghost"} showTooltip={false}
+                ></VisitedButton>
             </div>
             {#if image}
                 <ImageWatermark source={image.source}></ImageWatermark>
@@ -110,7 +127,7 @@
         opacity: 0;
     }
 
-    .place-card-body:hover .card-action {
+    .place-card-body-lg:hover .card-action {
         display: block; /* Show when parent is hovered */
         opacity: 1;
     }
@@ -129,7 +146,16 @@
     }
 
     .place-card-body {
-        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 400px;
+        padding: 0px;
+        position: relative;
+        border-radius: 10px 10px 0px 0px;
+        overflow: hidden;
+    }
+
+    .place-card-body-lg {
         justify-content: center;
         align-items: center;
         height: 400px;

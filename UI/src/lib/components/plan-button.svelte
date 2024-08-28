@@ -1,16 +1,18 @@
 <script lang="ts">
-    import { Icon, Bookmark } from "svelte-hero-icons";
+    import { Bookmark } from "svelte-hero-icons";
     import { t } from "../../i18n";
     import { planned } from "$lib/stores/planned-store";
     import { userInfo } from "$lib/stores/user-store";
     import { userPerformedFirstAction } from "$lib/stores/event-store";
     import type { Place } from "$lib/models/place";
+    import ActionIconButton from "./action-icon-button.svelte";
 
     export let place: Place;
     export let style: "ghost" | "normal" = "normal";
+    export let showTooltip = true;
 
     $: markedAsPlanned = $planned.some(
-        (plannedPlace) => plannedPlace.placeId === place.id
+        (plannedPlace) => plannedPlace.placeId === place.id,
     );
 
     const markAsPlanned = () => {
@@ -25,33 +27,17 @@
 
     const unmarkAsPlanned = () => {
         planned.update((planned) =>
-            planned.filter((plannedPlace) => plannedPlace.placeId !== place.id)
+            planned.filter((plannedPlace) => plannedPlace.placeId !== place.id),
         );
     };
 </script>
 
-{#if !markedAsPlanned}
-    <div
-        class="tooltip tooltip-left"
-        data-tip={$t("placecard.markAsPlannedTooltip")}
-    >
-        <button
-            class="btn btn-square btn-sm btn-ghost"
-            on:click={markAsPlanned}
-        >
-            <Icon
-                src={Bookmark}
-                size="20"
-                color={style == "ghost" ? "#fff" : ""}
-            />
-        </button>
-    </div>
-{/if}
-{#if markedAsPlanned}
-    <button
-        class="btn btn-square btn-sm btn-success"
-        on:click={unmarkAsPlanned}
-    >
-        <Icon src={Bookmark} size="20" class="btn-neutral" />
-    </button>
-{/if}
+<ActionIconButton
+    {style}
+    showTooltipOnHover={showTooltip}
+    tooltipText={$t("placecard.markAsPlannedTooltip")}
+    icon={Bookmark}
+    active={markedAsPlanned}
+    setActive={markAsPlanned}
+    setInctive={unmarkAsPlanned}
+></ActionIconButton>
