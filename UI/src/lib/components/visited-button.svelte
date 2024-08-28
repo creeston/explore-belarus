@@ -39,5 +39,5 @@
     icon={Check}
     active={markedAsVisited}
     setActive={markAsVisited}
-    setInctive={unmarkAsVisited}
+    setInactive={unmarkAsVisited}
 ></ActionIconButton>
