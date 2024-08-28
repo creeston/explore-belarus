@@ -18,8 +18,8 @@
 
     let showFilters =
         $userInfo.showFilterBar !== undefined ? $userInfo.showFilterBar : true;
-    let excludeVisited = $userInfo.filterSpecification?.excludeVisited ?? false;
-    let excludePlanned = $userInfo.filterSpecification?.excludePlanned ?? false;
+    let excludeVisited = $userInfo.filterSpecification?.excludeVisited ?? true;
+    let excludePlanned = $userInfo.filterSpecification?.excludePlanned ?? true;
     let excludeIgnored = $userInfo.filterSpecification?.excludeIgnored ?? true;
     let regions: string[] = $userInfo.filterSpecification?.regions ?? [];
     let searchValue = "";
