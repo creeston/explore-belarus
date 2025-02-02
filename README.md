@@ -19,12 +19,22 @@ This project aggregates data from various sources to provide detailed informatio
 
 ## Development
 
+### Running the project
+
 To start developing this project, navigate to UI direcotry, install the dependencies and run the development server:
 
 ```bash
-cd UI
 npm install
 npm run dev -- --open
+```
+
+### Building the project
+
+To build the project, run the following command:
+Output will be put in the `docs` directory to be served by GitHub Pages.
+
+```bash
+npm run build 
 ```
 
 ## Resources
