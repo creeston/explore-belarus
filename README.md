@@ -1,5 +1,5 @@
 <div align="center">
-<img src="docs/static/logo.svg" />
+<img src="static/logo.svg" />
   <h1 align="center">Беларускі вандроўнік: comprehensive guide to the most fascinating places in Belarus.</h1>
 </div>
 
@@ -18,6 +18,14 @@ This project aggregates data from various sources to provide detailed informatio
 - Map of visited places and user-friendly interface 
 
 ## Development
+
+### Technologies
+
+- [Svelte](https://svelte.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [DaisyUI](https://daisyui.com/)
+- [Vite](https://vitejs.dev/)
 
 ### Running the project
 
